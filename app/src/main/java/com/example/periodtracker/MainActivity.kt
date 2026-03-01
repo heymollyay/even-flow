@@ -27,6 +27,8 @@ import androidx.compose.material3.Button
 import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.unit.dp
+import com.example.periodtracker.ui.HomeScreen
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,7 +99,8 @@ fun OnboardingScreen(onContinueClicked: () -> Unit, modifier: Modifier = Modifie
     }
 }
 
-@Composable fun HomeScreen() { Text("Home")}
+@Composable fun HomeScreen() { Text("Home") }
+// added real homescreen call
 @Composable fun CalendarScreen() { Text("Calendar")}
 @Composable fun JournalScreen() { Text("Journal")}
 @Composable fun ProfileScreen() { Text("Profile")}

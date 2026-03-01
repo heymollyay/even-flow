@@ -2,10 +2,13 @@ package com.example.periodtracker.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
-val Pink80 = Color(0xFFEFB8C8)
-
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
-val Pink40 = Color(0xFF7D5260)
+// Even Flow brand colors
+val DeepPurple = Color(0xFF3D2B8E)
+val MediumPurple = Color(0xFF6B5BBE)
+val Lavender = Color(0xFFB8A9E0)
+val LightLavender = Color(0xFFEDE8F8)
+val PinkAccent = Color(0xFFE88FA8)
+val PinkLight = Color(0xFFF8D7E3)
+val White = Color(0xFFFFFFFF)
+val TextDark = Color(0xFF1C1B2E)
+val TextMedium = Color(0xFF5A5870)
