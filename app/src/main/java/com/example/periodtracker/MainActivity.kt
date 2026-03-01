@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.unit.dp
 import com.example.periodtracker.ui.HomeScreen
+import com.example.periodtracker.ui.ProfileScreen
 
 
 class MainActivity : ComponentActivity() {

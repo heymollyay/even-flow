@@ -16,19 +16,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = DeepPurple,
-    onPrimary = Lavender,
-    primaryContainer = MediumPurple,
-    onPrimaryContainer = LightLavender,
-    secondary = PinkAccent,
-    onSecondary = TextDark,
-    background = Color(0xFF1A1625),
-    onBackground = LightLavender,
-    surface = Color(0xFF2A2040),
-    onSurface = LightLavender,
-)
-
 private val LightColorScheme = lightColorScheme(
     primary = DeepPurple,
     onPrimary = White,
@@ -42,8 +29,8 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = White,
     tertiaryContainer = PinkLight,
     onTertiaryContainer = TextDark,
-    background = White,
-    onBackground = TextDark,
+    background = DeepPurple,
+    onBackground = White,
     surface = LightLavender,
     onSurface = TextDark,
     surfaceVariant = LightLavender,
