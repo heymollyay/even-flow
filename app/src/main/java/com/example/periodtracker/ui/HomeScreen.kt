@@ -1,5 +1,6 @@
 package com.example.periodtracker.ui
 
+
 import android.accessibilityservice.GestureDescription
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -34,9 +35,17 @@ import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.periodtracker.ui.theme.FollicularOrange
+import com.example.periodtracker.ui.theme.LutealPink
+import com.example.periodtracker.ui.theme.OvulationPurple
+import com.example.periodtracker.ui.theme.PeriodRed
+import com.example.periodtracker.ui.theme.TextMedium
+import com.example.periodtracker.ui.theme.White
 import kotlin.math.PI
 import kotlin.math.atan
 import kotlin.math.atan2
@@ -65,6 +74,37 @@ fun HomeScreen() {
         )
 
         WeeklyCalendarHeader()
+
+        val cycleLength = UserData.getCycleLength(context)
+        val periodDuration = UserData.getPeriodDuration(context)
+        val lutealLength = UserData.getLutealLength(context)
+        val menstrualLength = UserData.getMenstrualLength(context)
+        val follicularLength = UserData.getFollicularLength(context)
+        val ovulationLength = UserData.getOvulationLength(context)
+
+
+        PhaseChart(
+            modifier = Modifier,
+            input = listOf(
+                PhaseInput(
+                    color = LutealPink,
+                    value = lutealLength,
+                ),
+                PhaseInput(
+                    color = PeriodRed,
+                    value = menstrualLength,
+                ),
+                PhaseInput(
+                    color = FollicularOrange,
+                    value = follicularLength,
+                ),
+    #            PhaseInput(
+                    color = OvulationPurple,
+                    value = ovulationLength,
+                ),
+            ),
+            centerText = "Cycle Overview"
+        )
     }
 
 
@@ -132,16 +172,108 @@ fun WeeklyCalendarHeader() {
 fun PhaseChart(
     modifier: Modifier = Modifier,
     radius:Float = 500f,
+    innerRadius:Float = 250f,
     transparentWidth:Float = 70f,
     input:List<PhaseInput>,
     centerText:String = "days until menstruation"
 ) {
+    var circleCenter by remember {
+        mutableStateOf(Offset.Zero)
+    }
+    var inputList by remember {
+        mutableStateOf(input)
+    }
 
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            val width = size.width
+            val height = size.height
+            circleCenter = Offset(x=width/2f,y=height/2f)
+
+            val totalValue = input.sumOf {
+                it.value
+            }
+            val anglePerValue = 360f/totalValue
+            var currentStartAngle = 0f
+
+            inputList.forEach {
+                phaseInput ->
+                val scale = 1.0f
+                val angleToDraw = phaseInput.value * anglePerValue
+                scale(scale) {
+                    drawArc (
+                        color = phaseInput.color,
+                        startAngle = currentStartAngle,
+                        sweepAngle = angleToDraw,
+                        useCenter = true,
+                        size = Size(
+                            width = radius*2f,
+                            height = radius*2f
+                        ),
+                        topLeft = Offset(
+                            (width-radius*2f)/2f,
+                            (height-radius*2f)/2f
+                        )
+                    )
+                    currentStartAngle += angleToDraw
+                }
+                var rotateAngle = currentStartAngle-angleToDraw/2f-90f
+                var factor = 1f
+                if(rotateAngle>90f){
+                    rotateAngle = (rotateAngle+180).mod(360f)
+                    factor = -0.92f
+                }
+
+                val days = phaseInput.value
+
+                drawContext.canvas.nativeCanvas.apply {
+                    rotate(rotateAngle) {
+                        drawText(
+                            "$days days",
+                            circleCenter.x,
+                            circleCenter.y+(radius-(radius-innerRadius)/2f)*factor,
+                            Paint().apply {
+                                textSize = 13.sp.toPx()
+                                textAlign = Paint.Align.CENTER
+                                color = White.toArgb()
+                            }
+                        )
+                    }
+                }
+            }
+            drawContext.canvas.nativeCanvas.apply {
+                drawCircle(
+                    circleCenter.x,
+                    circleCenter.y,
+                    innerRadius,
+                    Paint().apply {
+                        color = White.toArgb()
+                    }
+                )
+            }
+
+        }
+        Text(
+            centerText,
+            modifier = Modifier
+                .width(Dp(innerRadius/1.5f))
+                .padding(25.dp),
+            fontWeight = FontWeight.SemiBold,
+            fontSize = 17.sp,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
 }
 
 data class PhaseInput(
     val color: Color,
     val value:Int,
-    val description:String,
-    val isTapped:Boolean = false
 )
+
