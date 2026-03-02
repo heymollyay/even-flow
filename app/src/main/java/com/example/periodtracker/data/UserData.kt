@@ -15,6 +15,11 @@ object UserData {
     private const val KEY_CYCLE_LENGTH = "cycle_length"
     private const val KEY_LONG_TERM_CONTRACEPTIVES = "long_term_contraceptives"
 
+    //cycle lengths
+    private const val KEY_FOLLICULAR_LENGTH = "follicular_length"
+    private const val KEY_MENSTRUAL_LENGTH = "menstrual_length"
+    private const val KEY_LUTEAL_LENGTH = "luteal_length"
+    private const val KEY_OVULATION_LENGTH = "ovulation_length"
 
 
     private fun getPreferences(context: Context) = EncryptedSharedPreferences.create(
@@ -76,6 +81,38 @@ object UserData {
     fun getLongTermContraceptives(context: Context): String {
         return getPreferences(context).getString(KEY_LONG_TERM_CONTRACEPTIVES, "")?:""
     }
+    fun saveLutealLength(context: Context, days: Int) {
+        getPreferences(context).edit().putInt(KEY_LUTEAL_LENGTH, days).apply()
+    }
+    fun getLutealLength(context: Context): Int {
+        return getPreferences(context).getInt(KEY_LUTEAL_LENGTH, 14)
+    }
+
+    fun saveMenstrualLength(context: Context, days: Int) {
+        getPreferences(context).edit().putInt(KEY_MENSTRUAL_LENGTH, days).apply()
+    }
+
+    fun getMenstrualLength(context: Context): Int {
+        return getPreferences(context).getInt(KEY_MENSTRUAL_LENGTH, 5)
+    }
+
+    fun saveFollicularLength(context: Context, days: Int) {
+        getPreferences(context).edit().putInt(KEY_FOLLICULAR_LENGTH, days).apply()
+    }
+
+    fun getFollicularLength(context: Context): Int {
+        return getPreferences(context).getInt(KEY_FOLLICULAR_LENGTH, 7)
+    }
+
+    fun saveOvulationLength(context: Context, days: Int) {
+        getPreferences(context).edit().putInt(KEY_OVULATION_LENGTH, days).apply()
+    }
+
+    fun getOvulationLength(context: Context): Int {
+        return getPreferences(context).getInt(KEY_OVULATION_LENGTH, 2)
+    }
+
+
 
 
 
