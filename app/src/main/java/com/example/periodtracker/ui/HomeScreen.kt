@@ -1,5 +1,6 @@
 package com.example.periodtracker.ui
 
+import android.accessibilityservice.GestureDescription
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -9,6 +10,36 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.background
 import com.example.periodtracker.data.UserData
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import com.example.periodtracker.ui.theme.bodyLargeBold
+
+import java.time.LocalDate
+import java.time.DayOfWeek
+import java.time.temporal.TemporalAdjusters
+
+import android.graphics.Paint
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.*
+import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import kotlin.math.PI
+import kotlin.math.atan
+import kotlin.math.atan2
 
 
 @Composable
@@ -67,9 +98,9 @@ fun WeeklyCalendarHeader() {
                     text = day,
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = if (weekDates[index] == today) MaterialTheme.colorScheme.onSurface
-                        else MaterialTheme.colorScheme.onSurfaceVariant
+                    style = if (weekDates[index]==today) bodyLargeBold
+                            else MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -87,12 +118,30 @@ fun WeeklyCalendarHeader() {
                     text = date.dayOfMonth.toString(),
                     modifier = Modifier.weight(1f),
                     textAlign = TextAlign.Center,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = if (isToday) MaterialTheme.colorScheme.onSurface
-                            else MaterialTheme.colorScheme.onSurfaceVariant
+                    style = if (isToday) bodyLargeBold
+                    else MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
 
             }
         }
     } }
 }
+
+@Composable
+fun PhaseChart(
+    modifier: Modifier = Modifier,
+    radius:Float = 500f,
+    transparentWidth:Float = 70f,
+    input:List<PhaseInput>,
+    centerText:String = "days until menstruation"
+) {
+
+}
+
+data class PhaseInput(
+    val color: Color,
+    val value:Int,
+    val description:String,
+    val isTapped:Boolean = false
+)
