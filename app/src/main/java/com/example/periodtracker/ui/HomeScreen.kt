@@ -7,9 +7,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.background
+import com.example.periodtracker.data.UserData
+import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
-fun HomeScreen(username: String = "") {
+fun HomeScreen() {
+
+    val context = LocalContext.current
+    val username = UserData.getUsername(context)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
