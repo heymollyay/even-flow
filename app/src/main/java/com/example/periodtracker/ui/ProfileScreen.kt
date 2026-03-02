@@ -1,6 +1,5 @@
 package com.example.periodtracker.ui
 
-import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -13,10 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.platform.LocalContext
+import com.example.periodtracker.data.UserData
 
 @Composable
 fun ProfileScreen() {
-    var username by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    var username by remember { mutableStateOf(UserData.getUsername(context)) }
     var editMode by remember { mutableStateOf(false) }
     var tempUsername by remember { mutableStateOf("") }
 
@@ -76,12 +78,13 @@ fun ProfileScreen() {
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         Button(onClick = {
+                            UserData.saveUsername(context, tempUsername)
                             username = tempUsername
-                            editMode = false
+                            editMode = false // quits the screen
                         }) {
                             Text("Save")
                         }
-                        TextButton(onClick = { editMode = false }) {
+                        Button(onClick = { editMode = false }) { //quits the screen
                             Text("Cancel")
                         }
                     }
@@ -104,8 +107,8 @@ fun ProfileScreen() {
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.primaryContainer
-            )
+                containerColor = MaterialTheme.colorScheme.primaryContainer)
+
         ) {
             Column(
                 modifier = Modifier.padding(16.dp),

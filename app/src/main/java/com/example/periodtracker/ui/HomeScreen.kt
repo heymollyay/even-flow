@@ -7,16 +7,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
-import androidx.compose.ui.text.style.TextAlign
-import java.time.LocalDate
-import java.time.DayOfWeek
-import java.time.temporal.TemporalAdjusters
+import com.example.periodtracker.data.UserData
+import androidx.compose.ui.platform.LocalContext
+
 
 @Composable
-fun HomeScreen(username: String = "") {
+fun HomeScreen() {
+
+    val context = LocalContext.current
+    val username = UserData.getUsername(context)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
