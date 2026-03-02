@@ -1,7 +1,5 @@
 package com.example.periodtracker.ui
 
-
-import android.accessibilityservice.GestureDescription
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -13,42 +11,28 @@ import com.example.periodtracker.data.UserData
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import com.example.periodtracker.ui.theme.bodyLargeBold
-
 import java.time.LocalDate
 import java.time.DayOfWeek
 import java.time.temporal.TemporalAdjusters
-
 import android.graphics.Paint
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.graphics.drawscope.scale
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.periodtracker.ui.theme.FollicularOrange
 import com.example.periodtracker.ui.theme.LutealPink
 import com.example.periodtracker.ui.theme.OvulationPurple
 import com.example.periodtracker.ui.theme.PeriodRed
-import com.example.periodtracker.ui.theme.TextMedium
 import com.example.periodtracker.ui.theme.White
-import kotlin.math.PI
-import kotlin.math.atan
-import kotlin.math.atan2
+import java.time.Instant
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 
 @Composable
@@ -64,7 +48,7 @@ fun HomeScreen() {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = if (username.isBlank()) "Hello, User." else "Hello, $username.",
@@ -82,6 +66,16 @@ fun HomeScreen() {
         val follicularLength = UserData.getFollicularLength(context)
         val ovulationLength = UserData.getOvulationLength(context)
 
+        //Days until next period
+        val today = LocalDate.now()
+        //lastPeriod needs to be updated each time after a period happens so that days since stays updated.
+        val lastPeriod = Instant.ofEpochMilli(UserData.getLastPeriodStart(context))
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+
+        val daysSincePeriod = ChronoUnit.DAYS.between(lastPeriod,today)
+
+        val daysUntilNextPeriod = cycleLength - daysSincePeriod
 
         PhaseChart(
             modifier = Modifier,
@@ -98,13 +92,15 @@ fun HomeScreen() {
                     color = FollicularOrange,
                     value = follicularLength,
                 ),
-    #            PhaseInput(
+                PhaseInput(
                     color = OvulationPurple,
                     value = ovulationLength,
                 ),
             ),
-            centerText = "Cycle Overview"
+            centerText = if (daysUntilNextPeriod <= 0) "Menstruating" else
+                "$daysUntilNextPeriod days until menstruation"
         )
+
     }
 
 
@@ -173,7 +169,6 @@ fun PhaseChart(
     modifier: Modifier = Modifier,
     radius:Float = 500f,
     innerRadius:Float = 250f,
-    transparentWidth:Float = 70f,
     input:List<PhaseInput>,
     centerText:String = "days until menstruation"
 ) {
