@@ -33,11 +33,66 @@ fun HomeScreen() {
             color = MaterialTheme.colorScheme.onPrimary
         )
 
-        Text(
-            text = "Tracking your period just got easier." +
-                    "\nADD Remaining Content Here - INCOMPLETE",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
+        WeeklyCalendarHeader()
     }
+
+
+}
+
+@Composable
+fun WeeklyCalendarHeader() {
+    val today = LocalDate.now()
+    val sunday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+    val weekDates = (0..6).map {  sunday.plusDays(it.toLong())}
+
+    val weekDays = listOf("sun", "mon", "tue", "wed", "thu", "fri", "sat")
+
+    Card (
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            weekDays.forEachIndexed {
+                index, day ->
+
+                Text (
+                    text = day,
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (weekDates[index] == today) MaterialTheme.colorScheme.onSurface
+                        else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            weekDates.forEach {
+                date ->
+                val isToday = date == today
+
+                Text (
+                    text = date.dayOfMonth.toString(),
+                    modifier = Modifier.weight(1f),
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = if (isToday) MaterialTheme.colorScheme.onSurface
+                            else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+
+            }
+        }
+    } }
 }
