@@ -70,9 +70,11 @@ fun HomeScreen() {
         //Days until next period
         val today = LocalDate.now()
         //lastPeriod needs to be updated each time after a period happens so that days since stays updated.
-        val lastPeriod = Instant.ofEpochMilli(UserData.getLastPeriodStart(context))
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate()
+        val lastPeriod = UserData.getLastPeriodStart(context)?.let { epochMs ->
+            Instant.ofEpochMilli(epochMs)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        }
 
         val daysSincePeriod = ChronoUnit.DAYS.between(lastPeriod,today)
 

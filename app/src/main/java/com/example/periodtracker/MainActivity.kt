@@ -1,9 +1,9 @@
 package com.example.periodtracker
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.DateRange
@@ -19,14 +19,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import com.example.periodtracker.data.calculatePhaseLengths
 import com.example.periodtracker.ui.theme.PeriodTrackerTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.material3.Button
-import androidx.compose.ui.Alignment
-import androidx.compose.foundation.layout.Column
-import androidx.compose.ui.unit.dp
 import com.example.periodtracker.ui.HomeScreen
+import com.example.periodtracker.ui.Onboarding.OnboardingScreen
 import com.example.periodtracker.ui.ProfileScreen
 import androidx.fragment.app.FragmentActivity
 
@@ -46,12 +44,16 @@ class MainActivity : FragmentActivity() { //updated for biometrics activity trac
 @Composable
 fun PeriodTrackerApp(modifier: Modifier = Modifier) {
 
+    val context = LocalContext.current
+
     var shouldShowOnboarding by rememberSaveable { mutableStateOf(true)}
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
 
     if (shouldShowOnboarding) {
         OnboardingScreen(
-            onContinueClicked = { shouldShowOnboarding = false}
+            onFinish = {
+                calculatePhaseLengths(context)
+                shouldShowOnboarding = false}
         )
         return
     }
@@ -82,29 +84,8 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
     }
 
 }
-@Composable
-fun OnboardingScreen(onContinueClicked: () -> Unit, modifier: Modifier = Modifier)
-{
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Tracking your period just got easier.")
-        Button (
-            modifier = Modifier.padding(vertical = 24.dp),
-            onClick = onContinueClicked
-        ) {
-            Text("Continue")
-        }
-    }
-}
-
-@Composable fun HomeScreen() { Text("Home") }
-// added real homescreen call
 @Composable fun CalendarScreen() { Text("Calendar")}
 @Composable fun JournalScreen() { Text("Journal")}
-@Composable fun ProfileScreen() { Text("Profile")}
 
 enum class AppDestinations(
     val label: String,
