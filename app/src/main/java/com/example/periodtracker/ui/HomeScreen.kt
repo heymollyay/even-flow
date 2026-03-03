@@ -60,7 +60,6 @@ fun HomeScreen() {
         WeeklyCalendarHeader()
 
         val cycleLength = UserData.getCycleLength(context)
-        val periodDuration = UserData.getPeriodDuration(context)
         val lutealLength = UserData.getLutealLength(context)
         val menstrualLength = UserData.getMenstrualLength(context)
         val follicularLength = UserData.getFollicularLength(context)
