@@ -49,12 +49,16 @@ object UserData {
         return getPreferences(context).getBoolean(KEY_HAS_LOGGED_IN, false)
     }
 
-    fun saveLastPeriodStart(context: Context, epochMs: Long) {
-        getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs).apply() //convert date to ms
+    fun saveLastPeriodStart(context: Context, epochMs: Long?) {
+        if (epochMs != null) {
+            getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs).apply() //convert date to ms
+        }
+
     }
 
-    fun getLastPeriodStart(context: Context): Long {
-        return getPreferences(context).getLong(KEY_LAST_PERIOD_START, -1L)
+    fun getLastPeriodStart(context: Context): Long? {
+        val value = getPreferences(context).getLong(KEY_LAST_PERIOD_START, -1L)
+        return if (value == -1L) null else value
     }
 
 
