@@ -1,7 +1,6 @@
 package com.example.periodtracker
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -29,9 +28,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.unit.dp
 import com.example.periodtracker.ui.HomeScreen
 import com.example.periodtracker.ui.ProfileScreen
+import androidx.fragment.app.FragmentActivity
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() { //updated for biometrics activity tracking DO NOT CHANGE
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
