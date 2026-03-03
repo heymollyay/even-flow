@@ -11,16 +11,11 @@ import com.example.periodtracker.data.UserData
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.style.TextAlign
 import java.time.LocalDate
 import java.time.DayOfWeek
 import java.time.temporal.TemporalAdjusters
-import androidx.compose.ui.text.style.TextAlign
 import com.example.periodtracker.ui.theme.bodyLargeBold
-import java.time.LocalDate
-import java.time.DayOfWeek
-import java.time.temporal.TemporalAdjusters
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
 import androidx.compose.runtime.*
