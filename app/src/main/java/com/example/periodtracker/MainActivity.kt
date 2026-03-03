@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.unit.dp
 import com.example.periodtracker.ui.HomeScreen
+import com.example.periodtracker.ui.OnboardingScreen
 import com.example.periodtracker.ui.ProfileScreen
 
 
@@ -51,7 +52,7 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
 
     if (shouldShowOnboarding) {
         OnboardingScreen(
-            onContinueClicked = { shouldShowOnboarding = false}
+            onFinish = { shouldShowOnboarding = false}
         )
         return
     }
@@ -82,29 +83,8 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
     }
 
 }
-@Composable
-fun OnboardingScreen(onContinueClicked: () -> Unit, modifier: Modifier = Modifier)
-{
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Tracking your period just got easier.")
-        Button (
-            modifier = Modifier.padding(vertical = 24.dp),
-            onClick = onContinueClicked
-        ) {
-            Text("Continue")
-        }
-    }
-}
-
-@Composable fun HomeScreen() { Text("Home") }
-// added real homescreen call
 @Composable fun CalendarScreen() { Text("Calendar")}
 @Composable fun JournalScreen() { Text("Journal")}
-@Composable fun ProfileScreen() { Text("Profile")}
 
 enum class AppDestinations(
     val label: String,
