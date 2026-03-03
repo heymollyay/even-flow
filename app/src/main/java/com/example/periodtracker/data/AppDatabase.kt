@@ -8,6 +8,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.periodtracker.data.CycleDao
 
+//TODO: MAKE SURE THE DATABASE IS ENCRYPTED AS WELL!
 
 @Database(entities = [CycleData::class], version = 1, exportSchema = false) //avoids file leaking
 abstract class AppDatabase : RoomDatabase() {

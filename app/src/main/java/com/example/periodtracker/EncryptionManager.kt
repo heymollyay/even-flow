@@ -1,6 +1,6 @@
-package com.example.periodtracker
+//Handles encryption using AndroidKeystore
 
-// Handles encryption using AndroidKeystore
+package com.example.periodtracker
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
