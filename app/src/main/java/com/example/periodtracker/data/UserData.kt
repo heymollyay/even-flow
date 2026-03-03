@@ -11,7 +11,6 @@ object UserData {
 
     //cycle data collected in onboarding
     private const val KEY_LAST_PERIOD_START = "last_period_start"
-    private const val KEY_PERIOD_DURATION = "period_duration"
     private const val KEY_CYCLE_LENGTH = "cycle_length"
     private const val KEY_LONG_TERM_CONTRACEPTIVES = "long_term_contraceptives"
 
@@ -58,13 +57,6 @@ object UserData {
         return getPreferences(context).getLong(KEY_LAST_PERIOD_START, -1L)
     }
 
-    fun savePeriodDuration(context: Context, days: Int) {
-        getPreferences(context).edit().putInt(KEY_PERIOD_DURATION, days).apply()
-    }
-
-    fun getPeriodDuration(context: Context): Int {
-        return getPreferences(context).getInt(KEY_PERIOD_DURATION, 5) //avg period 5 days
-    }
 
     fun saveCycleLength(context: Context, days: Int) {
         getPreferences(context).edit().putInt(KEY_CYCLE_LENGTH, days).apply()
