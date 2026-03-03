@@ -117,7 +117,7 @@ fun ProfileScreen() {
                                         editMode = true
                                     },
                                     onFailure = { errorCode ->
-                                        // ERROR_NO_DEVICE_CREDENTIAL = 14: truly no screen lock set up
+                                        // ERROR_NO_DEVICE_CREDENTIAL = 14: no screen lock set up
                                         if (errorCode == BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL) {
                                             android.widget.Toast.makeText(
                                                 context,
@@ -133,7 +133,7 @@ fun ProfileScreen() {
                                     context,
                                     "Oops, something went wrong.",
                                     android.widget.Toast.LENGTH_LONG
-                                ).show()// other codes (user cancelled, lockout, etc.) — do nothing
+                                ).show()
                             }
                         },
                         modifier = Modifier.fillMaxWidth()

@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.unit.dp
 import com.example.periodtracker.ui.HomeScreen
 import com.example.periodtracker.ui.ProfileScreen
+import com.example.periodtracker.ui.JournalScreen
 import androidx.fragment.app.FragmentActivity
 
 
@@ -101,9 +102,8 @@ fun OnboardingScreen(onContinueClicked: () -> Unit, modifier: Modifier = Modifie
 }
 
 @Composable fun HomeScreen() { Text("Home") }
-// added real homescreen call
 @Composable fun CalendarScreen() { Text("Calendar")}
-@Composable fun JournalScreen() { Text("Journal")}
+@Composable fun JournalScreen() { Text("Journal") }
 @Composable fun ProfileScreen() { Text("Profile")}
 
 enum class AppDestinations(
