@@ -2,26 +2,20 @@
 
 package com.example.periodtracker.data
 
-import androidx.Dao
+import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.Delete
 import androidx.room.Query
-
+import kotlinx.coroutines.flow.Flow //datatype for stream data - NOT part of our app
 
 @Dao
-interface UserDao {
-    @Query("SELECT * FROM user")
-    fun getAll(): List<User>
-
-    @Query("SELECT * FROM user WHERE uid IN (:userIds)")
-    fun loadAllByIds(userIds: IntArray): List<User>
-
-    @Query("SELECT * FROM user WHERE first_name LIKE :first AND " +
-            "last_name LIKE :last LIMIT 1")
-    fun findByName(first: String, last: String): User
+interface CycleDao {
+    @Query("SELECT * FROM cycle_entries")
+    fun getAll(): Flow<List<CycleData>> //automatically updates with insert/deletes
 
     @Insert
-    fun insertAll(vararg users: User)
+    fun insert(entry: CycleData)
 
-    @Delete
-    fun delete(user: User)
+    @Query("DELETE FROM cycle_entries WHERE id = :id")
+    fun delete(entry: CycleData)
 }
