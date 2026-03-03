@@ -12,3 +12,11 @@ val PinkLight = Color(0xFFF8D7E3)
 val White = Color(0xFFFFFFFF)
 val TextDark = Color(0xFF1C1B2E)
 val TextMedium = Color(0xFF5A5870)
+
+val PeriodRed = Color(0xFFFF5657)
+
+val FollicularOrange = Color(0xFFFF751F)
+
+val OvulationPurple = Color(0xFFCB6CE6)
+
+val LutealPink = Color(0xFFFF66C4)

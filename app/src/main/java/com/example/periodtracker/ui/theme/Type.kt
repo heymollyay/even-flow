@@ -53,3 +53,11 @@ val Typography = Typography(
         letterSpacing = 0.5.sp
     )
 )
+
+val bodyLargeBold = TextStyle(
+    fontFamily = FontFamily.Default,
+    fontWeight = FontWeight.Bold,
+    fontSize = 16.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
