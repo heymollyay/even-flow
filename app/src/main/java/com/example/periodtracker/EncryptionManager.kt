@@ -46,13 +46,13 @@ object EncryptionManager {
         keyGenerator.generateKey()
     }
 
-    // returns key from the android keystore (not hardware) for encryption/decryption use
+    //returns key from the android keystore (not hardware) for encryption/decryption use
     private fun getKey(): SecretKey {
         val keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null)}
         return keyStore.getKey(KEY_ALIAS, null) as SecretKey
     }
 
-    // encrypts string information using cipher and initialization vector to generate secure encryption
+    //encrypts string information using cipher and initialization vector to generate secure encryption
     fun encrypt(plaintext: String): String {
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, getKey())
@@ -62,7 +62,7 @@ object EncryptionManager {
         return Base64.encodeToString(combined, Base64.NO_WRAP)
     }
 
-    // decrypts only on the same physical device
+    //decrypts only on the same physical device
     fun decrypt(ciphertext: String): String {
         val combined = Base64.decode(ciphertext, Base64.NO_WRAP)
         val iv = combined.copyOfRange(0, 12)

@@ -16,12 +16,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import java.time.LocalDate
-import com.example.periodtracker.ui.theme.FollicularOrange
-import com.example.periodtracker.ui.theme.LutealPink
-import com.example.periodtracker.ui.theme.OvulationPurple
-import com.example.periodtracker.ui.theme.PeriodRed
-import com.example.periodtracker.ui.theme.White
 import com.example.periodtracker.ui.theme.SuccessGreen
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.rememberCoroutineScope
+import com.example.periodtracker.EncryptionManager
+import com.example.periodtracker.data.AppDatabase
+import com.example.periodtracker.data.CycleData
+import kotlinx.coroutines.launch
 
 @Composable
 fun JournalScreen() {
@@ -29,6 +30,10 @@ fun JournalScreen() {
     var selectedFlow by remember { mutableStateOf("") }
     var notes by remember { mutableStateOf("") }
     var saved by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope() //for Rooms
+    val db = remember { AppDatabase.getInstance(context) }
 
     val flowOptions = listOf("None", "Light", "Medium", "Heavy", "Abnormal")
 
@@ -112,7 +117,7 @@ fun JournalScreen() {
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     flowOptions.forEach { option ->
-                        val isSelected = selectedFlow == option
+                        val isSelected = selectedFlow == option //TODO - FIX THIS WHEN CLICKED
                         Box(
                             modifier = Modifier
                                 .weight(1f)
@@ -178,7 +183,19 @@ fun JournalScreen() {
 
         //save button
         OutlinedButton(
-            onClick = { saved = true },
+            onClick = { //uses room to save to database
+                scope.launch {
+                    val entry = CycleData(
+                        encryptedDate = EncryptionManager.encrypt(selectedDate.trim()),
+                        encryptedFlow = EncryptionManager.encrypt(selectedFlow.ifBlank { "None" }),
+                        encryptedNotes = EncryptionManager.encrypt(notes.trim())
+                    ) //TODO: VERIFY ENCRYPTION
+                    db.cycleDao().insert(entry)
+                    saved = true
+                    selectedFlow = ""
+                    notes = ""
+                }
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(52.dp),

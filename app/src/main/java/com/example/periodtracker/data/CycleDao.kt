@@ -10,12 +10,9 @@ import kotlinx.coroutines.flow.Flow //datatype for stream data - NOT part of our
 
 @Dao
 interface CycleDao {
-    @Query("SELECT * FROM cycle_entries")
-    fun getAll(): Flow<List<CycleData>> //automatically updates with insert/deletes
+    @Query("SELECT * FROM cycle_entries ORDER BY createdAt DESC")
+    fun getAll(): Flow<List<CycleData>>
 
     @Insert
-    fun insert(entry: CycleData)
-
-    @Query("DELETE FROM cycle_entries WHERE id = :id")
-    fun delete(entry: CycleData)
+    suspend fun insert(entry: CycleData)
 }
