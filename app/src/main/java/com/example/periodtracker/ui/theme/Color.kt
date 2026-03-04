@@ -20,5 +20,3 @@ val FollicularOrange = Color(0xFFFF751F)
 val OvulationPurple = Color(0xFFCB6CE6)
 
 val LutealPink = Color(0xFFFF66C4)
-
-val SuccessGreen = Color(0xFFC9F8B8)
