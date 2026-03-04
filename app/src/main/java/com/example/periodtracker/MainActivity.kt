@@ -3,6 +3,7 @@ package com.example.periodtracker
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -19,24 +20,19 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
-import com.example.periodtracker.data.calculatePhaseLengths
 import com.example.periodtracker.ui.theme.PeriodTrackerTheme
-import com.example.periodtracker.ui.HomeScreen
-import com.example.periodtracker.ui.Onboarding.OnboardingScreen
-import com.example.periodtracker.ui.ProfileScreen
-import com.example.periodtracker.ui.JournalScreen
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Button
+import com.example.periodtracker.ui.HomeScreen
+import com.example.periodtracker.ui.JournalScreen
+import com.example.periodtracker.ui.ProfileScreen
+import com.example.periodtracker.ui.Welcome
+import com.example.periodtracker.ui.onboarding.OnboardingQuiz
 
 
-class MainActivity : FragmentActivity() { //updated for biometrics activity tracking DO NOT CHANGE: FRAGMENT IS NEEDED
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -53,66 +49,103 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
 
     val context = LocalContext.current
 
-    var shouldShowOnboarding by rememberSaveable { mutableStateOf(true)}
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
-
-    if (shouldShowOnboarding) {
-        OnboardingScreen(
-            onFinish = {
-                calculatePhaseLengths(context)
-                shouldShowOnboarding = false}
-        )
-        return
+    val activity = remember(context) {
+        var ctx: android.content.Context = context
+        while (ctx is android.content.ContextWrapper) {
+            if (ctx is FragmentActivity) return@remember ctx
+            ctx = ctx.baseContext
+        }
+        null
     }
 
-    NavigationSuiteScaffold(
-        navigationSuiteItems = {
-            AppDestinations.entries.forEach { destination ->
-                item(
-                    icon = {
-                        Icon(
-                            destination.icon,
-                            contentDescription = destination.label
+    val sharedPrefs = remember {
+        context.getSharedPreferences("com.example.periodtracker", Context.MODE_PRIVATE)
+    }
+
+    var shouldShowOnboarding by rememberSaveable {
+        val isFirstTime = sharedPrefs.getString("token", null) == null
+        if (isFirstTime) {
+            sharedPrefs.edit().putString("token", "true").apply()
+        }
+        mutableStateOf(isFirstTime)
+    }
+
+    var isAuthenticated by rememberSaveable { mutableStateOf(false) }
+
+    when {
+        // First ever launch → onboarding
+        shouldShowOnboarding -> {
+            OnboardingQuiz(
+                onFinish = {
+                    calculatePhaseLengths(context)
+                    shouldShowOnboarding = false
+                }
+            )
+        }
+        !isAuthenticated -> {
+            Welcome(
+                buttonName= "Login",
+                onContinueClicked = {
+                    if (activity != null) {
+                        Biometrics.authenticate(
+                            activity = activity,
+                            title = "Even Flow",
+                            subtitle = "Verify your identity to enter app",
+                            onSuccess = {
+                                isAuthenticated = true  // ← THIS was missing
+                            },
+                            onFailure = { errorCode ->
+                                if (errorCode == BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL) {
+                                    android.widget.Toast.makeText(
+                                        context,
+                                        "Please set up a PIN or biometrics in your device settings.",
+                                        android.widget.Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
                         )
-                    },
-                    label = { Text(destination.label) },
-                    selected = destination == currentDestination,
-                    onClick = { currentDestination = destination }
-                )
+                    } else {
+                        android.widget.Toast.makeText(
+                            context,
+                            "Oops, something went wrong.",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            )
+        }
+
+        else -> {
+            NavigationSuiteScaffold(
+                navigationSuiteItems = {
+                    AppDestinations.entries.forEach { destination ->
+                        item(
+                            icon = {
+                                Icon(
+                                    destination.icon,
+                                    contentDescription = destination.label
+                                )
+                            },
+                            label = { Text(destination.label) },
+                            selected = destination == currentDestination,
+                            onClick = { currentDestination = destination }
+                        )
+                    }
+                } )
+            {
+                when(currentDestination) {
+                    AppDestinations.HOME -> HomeScreen()
+                    AppDestinations.CALENDAR -> CalendarScreen()
+                    AppDestinations.JOURNAL -> JournalScreen()
+                    AppDestinations.PROFILE -> ProfileScreen()
+                }
             }
-        } )
-    {
-        when(currentDestination) {
-            AppDestinations.HOME -> HomeScreen()
-            AppDestinations.CALENDAR -> CalendarScreen()
-            AppDestinations.JOURNAL -> JournalScreen()
-            AppDestinations.PROFILE -> ProfileScreen()
-        }
-    }
-
-}
-@Composable
-fun OnboardingScreen(onContinueClicked: () -> Unit, modifier: Modifier = Modifier)
-{
-    Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text("Tracking your period just got easier.")
-        Button (
-            modifier = Modifier.padding(vertical = 24.dp),
-            onClick = onContinueClicked
-        ) {
-            Text("Continue")
         }
     }
 }
 
-@Composable fun HomeScreen() { Text("Home") }
 @Composable fun CalendarScreen() { Text("Calendar")}
-@Composable fun JournalScreen() { Text("Journal") }
-@Composable fun ProfileScreen() { Text("Profile")}
 
 enum class AppDestinations(
     val label: String,

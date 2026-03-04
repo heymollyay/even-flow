@@ -1,4 +1,4 @@
-package com.example.periodtracker.ui.Onboarding
+package com.example.periodtracker.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,7 +29,7 @@ import com.example.periodtracker.ui.theme.DeepPurple
 import com.example.periodtracker.ui.theme.White
 
 @Composable
-fun OnboardingWelcome(onContinueClicked: () -> Unit, modifier: Modifier = Modifier) {
+fun Welcome(onContinueClicked: () -> Unit, modifier: Modifier = Modifier, buttonName: String) {
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -82,7 +82,7 @@ fun OnboardingWelcome(onContinueClicked: () -> Unit, modifier: Modifier = Modifi
             shape = RoundedCornerShape(50)
         ) {
             Text(
-                text = "Continue",
+                text = buttonName,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp
             )

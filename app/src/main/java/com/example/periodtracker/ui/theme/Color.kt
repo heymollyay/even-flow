@@ -21,4 +21,3 @@ val OvulationPurple = Color(0xFFCB6CE6)
 
 val LutealPink = Color(0xFFFF66C4)
 
-val AccentBlue = Color(0xFF8A80D4)
