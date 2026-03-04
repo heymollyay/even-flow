@@ -49,12 +49,16 @@ object UserData {
         return getPreferences(context).getBoolean(KEY_HAS_LOGGED_IN, false)
     }
 
-    fun saveLastPeriodStart(context: Context, epochMs: Long) {
-        getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs).apply() //convert date to ms
+    fun saveLastPeriodEnd(context: Context, epochMs: Long?) {
+        if (epochMs != null) {
+            getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs).apply() //convert date to ms
+        }
+
     }
 
-    fun getLastPeriodStart(context: Context): Long {
-        return getPreferences(context).getLong(KEY_LAST_PERIOD_START, -1L)
+    fun getLastPeriodEnd(context: Context): Long? {
+        val value = getPreferences(context).getLong(KEY_LAST_PERIOD_START, -1L)
+        return if (value == -1L) null else value
     }
 
 
@@ -63,7 +67,7 @@ object UserData {
     }
 
     fun getCycleLength(context:Context): Int {
-        return getPreferences(context).getInt(KEY_CYCLE_LENGTH, 28) //avg cycle 28 days
+        return getPreferences(context).getInt(KEY_CYCLE_LENGTH, 28)
     }
 
     fun saveLongTermContraceptives(context: Context, contraceptive: String) {
@@ -77,7 +81,7 @@ object UserData {
         getPreferences(context).edit().putInt(KEY_LUTEAL_LENGTH, days).apply()
     }
     fun getLutealLength(context: Context): Int {
-        return getPreferences(context).getInt(KEY_LUTEAL_LENGTH, 14)
+        return getPreferences(context).getInt(KEY_LUTEAL_LENGTH, 12)
     }
 
     fun saveMenstrualLength(context: Context, days: Int) {
@@ -85,7 +89,7 @@ object UserData {
     }
 
     fun getMenstrualLength(context: Context): Int {
-        return getPreferences(context).getInt(KEY_MENSTRUAL_LENGTH, 5)
+        return getPreferences(context).getInt(KEY_MENSTRUAL_LENGTH, 4) //4 is average across all cycle lengths
     }
 
     fun saveFollicularLength(context: Context, days: Int) {
@@ -93,7 +97,7 @@ object UserData {
     }
 
     fun getFollicularLength(context: Context): Int {
-        return getPreferences(context).getInt(KEY_FOLLICULAR_LENGTH, 7)
+        return getPreferences(context).getInt(KEY_FOLLICULAR_LENGTH, 10)
     }
 
     fun saveOvulationLength(context: Context, days: Int) {
