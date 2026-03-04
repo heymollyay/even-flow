@@ -60,15 +60,11 @@ fun HomeScreen() {
         WeeklyCalendarHeader()
 
         val cycleLength = UserData.getCycleLength(context)
-        val lutealLength = UserData.getLutealLength(context)
-        val menstrualLength = UserData.getMenstrualLength(context)
-        val follicularLength = UserData.getFollicularLength(context)
-        val ovulationLength = UserData.getOvulationLength(context)
 
         //Days until next period
         val today = LocalDate.now()
         //lastPeriod needs to be updated each time after a period happens so that days since stays updated.
-        val lastPeriod = UserData.getLastPeriodStart(context)?.let { epochMs ->
+        val lastPeriod = UserData.getLastPeriodEnd(context)?.let { epochMs ->
             Instant.ofEpochMilli(epochMs)
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate()
@@ -83,19 +79,19 @@ fun HomeScreen() {
             input = listOf(
                 PhaseInput(
                     color = LutealPink,
-                    value = lutealLength,
+                    value = UserData.getLutealLength(context),
                 ),
                 PhaseInput(
                     color = PeriodRed,
-                    value = menstrualLength,
+                    value = UserData.getMenstrualLength(context),
                 ),
                 PhaseInput(
                     color = FollicularOrange,
-                    value = follicularLength,
+                    value = UserData.getFollicularLength(context),
                 ),
                 PhaseInput(
                     color = OvulationPurple,
-                    value = ovulationLength,
+                    value = UserData.getOvulationLength(context),
                 ),
             ),
             centerText = if (daysUntilNextPeriod <= 0) "Menstruating" else
@@ -176,9 +172,6 @@ fun PhaseChart(
     var circleCenter by remember {
         mutableStateOf(Offset.Zero)
     }
-    var inputList by remember {
-        mutableStateOf(input)
-    }
 
     Box(
         modifier = modifier,
@@ -198,7 +191,7 @@ fun PhaseChart(
             val anglePerValue = 360f/totalValue
             var currentStartAngle = 0f
 
-            inputList.forEach {
+            input.forEach {
                 phaseInput ->
                 val scale = 1.0f
                 val angleToDraw = phaseInput.value * anglePerValue
