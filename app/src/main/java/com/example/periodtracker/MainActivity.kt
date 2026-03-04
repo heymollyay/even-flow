@@ -2,7 +2,6 @@ package com.example.periodtracker
 
 import android.content.Context
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -27,9 +26,17 @@ import com.example.periodtracker.ui.theme.PeriodTrackerTheme
 import com.example.periodtracker.ui.HomeScreen
 import com.example.periodtracker.ui.Onboarding.OnboardingScreen
 import com.example.periodtracker.ui.ProfileScreen
+import com.example.periodtracker.ui.JournalScreen
+import androidx.fragment.app.FragmentActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Button
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() { //updated for biometrics activity tracking DO NOT CHANGE: FRAGMENT IS NEEDED
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -84,8 +91,28 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
     }
 
 }
+@Composable
+fun OnboardingScreen(onContinueClicked: () -> Unit, modifier: Modifier = Modifier)
+{
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Tracking your period just got easier.")
+        Button (
+            modifier = Modifier.padding(vertical = 24.dp),
+            onClick = onContinueClicked
+        ) {
+            Text("Continue")
+        }
+    }
+}
+
+@Composable fun HomeScreen() { Text("Home") }
 @Composable fun CalendarScreen() { Text("Calendar")}
-@Composable fun JournalScreen() { Text("Journal")}
+@Composable fun JournalScreen() { Text("Journal") }
+@Composable fun ProfileScreen() { Text("Profile")}
 
 enum class AppDestinations(
     val label: String,

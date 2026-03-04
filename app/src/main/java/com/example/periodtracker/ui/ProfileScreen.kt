@@ -14,6 +14,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import com.example.periodtracker.data.UserData
+import androidx.fragment.app.FragmentActivity //UPDATED TO USE THIS FOR BIOMETRICS CAPABILITY
+import com.example.periodtracker.Biometrics
+import androidx.biometric.BiometricPrompt
+
 
 @Composable
 fun ProfileScreen() {
@@ -21,6 +25,15 @@ fun ProfileScreen() {
     var username by remember { mutableStateOf(UserData.getUsername(context)) }
     var editMode by remember { mutableStateOf(false) }
     var tempUsername by remember { mutableStateOf("") }
+    //uses main's activity tracker (which MUST be AppCompatActivity: FragmentActivity for biometrics )
+    val activity = remember(context) {
+        var ctx: android.content.Context = context
+        while (ctx is android.content.ContextWrapper) {
+            if (ctx is FragmentActivity) return@remember ctx
+            ctx = ctx.baseContext
+        }
+        null
+    }
 
     Column(
         modifier = Modifier
@@ -67,7 +80,7 @@ fun ProfileScreen() {
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.primary
                 )
-
+                //edit username capabilities
                 if (editMode) {
                     OutlinedTextField(
                         value = tempUsername,
@@ -77,22 +90,51 @@ fun ProfileScreen() {
                         modifier = Modifier.fillMaxWidth()
                     )
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        // save button - immediately overwrites old username with new one
                         Button(onClick = {
                             UserData.saveUsername(context, tempUsername)
                             username = tempUsername
-                            editMode = false // quits the screen
+                            editMode = false
                         }) {
                             Text("Save")
                         }
-                        Button(onClick = { editMode = false }) { //quits the screen
+                        //cancel button
+                        Button(onClick = { editMode = false }) {
                             Text("Cancel")
                         }
                     }
                 } else {
+                    //edit button on profile overview
                     OutlinedButton(
                         onClick = {
-                            tempUsername = username
-                            editMode = true
+                            if (activity != null) {
+                                Biometrics.authenticate(
+                                    activity = activity,
+                                    title = "Even Flow",
+                                    subtitle = "Verify your identity to edit profile",
+                                    onSuccess = {
+                                        tempUsername = username
+                                        editMode = true
+                                    },
+                                    onFailure = { errorCode ->
+                                        // ERROR_NO_DEVICE_CREDENTIAL = 14: no screen lock set up
+                                        if (errorCode == BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL) {
+                                            android.widget.Toast.makeText(
+                                                context,
+                                                "Please set up a PIN or biometrics in your device settings.",
+                                                android.widget.Toast.LENGTH_LONG
+                                            ).show()
+                                        }
+                                    }
+                                )
+                            }
+                            else {
+                                android.widget.Toast.makeText(
+                                    context,
+                                    "Oops, something went wrong.",
+                                    android.widget.Toast.LENGTH_LONG
+                                ).show()
+                            }
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
