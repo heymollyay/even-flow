@@ -1,6 +1,10 @@
 package com.example.periodtracker.data
 
 import android.content.Context
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 
 fun calculatePhaseLengths(context: Context) {
@@ -49,4 +53,23 @@ fun calculatePhaseLengths(context: Context) {
 
     UserData.saveLutealLength(context,lutealLength)
     UserData.saveFollicularLength(context,follicularLength)
+}
+
+fun calculateDaysTillNextPeriod(context:Context) {
+    val cycleLength = UserData.getCycleLength(context)
+
+    //Days until next period
+    val today = LocalDate.now()
+    //lastPeriod needs to be updated each time after a period happens so that days since stays updated.
+    val lastPeriod = UserData.getLastPeriodEnd(context)?.let { epochMs ->
+        Instant.ofEpochMilli(epochMs)
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+    }
+
+    val daysSincePeriod = ChronoUnit.DAYS.between(lastPeriod,today)
+
+    val daysUntilNextPeriod = cycleLength - daysSincePeriod
+
+    UserData.saveDaysUntilMenstruation(context,daysUntilNextPeriod.toInt())
 }

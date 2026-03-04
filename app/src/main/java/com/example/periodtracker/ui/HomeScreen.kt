@@ -16,8 +16,11 @@ import java.time.DayOfWeek
 import java.time.temporal.TemporalAdjusters
 import android.graphics.Paint
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
@@ -33,6 +36,9 @@ import com.example.periodtracker.ui.theme.White
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
+import com.example.periodtracker.R
 
 
 @Composable
@@ -50,32 +56,37 @@ fun HomeScreen() {
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(
-            text = if (username.isBlank()) "Hello, User." else "Hello, $username.",
-            style = MaterialTheme.typography.displaySmall,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
+        Row (
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.logo),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+            )
+            Text(
+                text = if (username.isBlank()) "Hello, User." else "Hello, $username.",
+                style = MaterialTheme.typography.displaySmall,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onPrimary
+            )
+
+        }
 
         WeeklyCalendarHeader()
 
-        val cycleLength = UserData.getCycleLength(context)
+        val daysUntilNextPeriod = UserData.getDaysUntilMenstruation(context)
 
-        //Days until next period
-        val today = LocalDate.now()
-        //lastPeriod needs to be updated each time after a period happens so that days since stays updated.
-        val lastPeriod = UserData.getLastPeriodEnd(context)?.let { epochMs ->
-            Instant.ofEpochMilli(epochMs)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
-        }
-
-        val daysSincePeriod = ChronoUnit.DAYS.between(lastPeriod,today)
-
-        val daysUntilNextPeriod = cycleLength - daysSincePeriod
+        Spacer(modifier = Modifier.height(24.dp))
 
         PhaseChart(
-            modifier = Modifier,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(320.dp),
             input = listOf(
                 PhaseInput(
                     color = LutealPink,
@@ -97,6 +108,13 @@ fun HomeScreen() {
             centerText = if (daysUntilNextPeriod <= 0) "Menstruating" else
                 "$daysUntilNextPeriod days until menstruation"
         )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        CyclePhaseKey(
+            modifier = Modifier.padding(vertical = 12.dp)
+        )
+
 
     }
 
@@ -265,4 +283,58 @@ data class PhaseInput(
     val color: Color,
     val value:Int,
 )
+
+@Composable
+fun CyclePhaseKey(modifier: Modifier = Modifier) {
+    val phases = listOf(
+        Pair("Luteal", LutealPink),
+        Pair("Menstruation", PeriodRed),
+        Pair("Follicular", FollicularOrange),
+        Pair("Ovulation", OvulationPurple)
+    )
+
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp),
+        shape = RoundedCornerShape(20.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        ),
+
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            phases.forEach { (label, color) ->
+                PhaseKeyItem(label = label, color = color)
+            }
+        }
+    }
+}
+
+@Composable
+fun PhaseKeyItem(label: String, color: Color) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(14.dp)
+                .clip(CircleShape)
+                .background(color)
+        )
+        Text(
+            text = label,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.Normal,
+            color = White
+        )
+    }
+}
 
