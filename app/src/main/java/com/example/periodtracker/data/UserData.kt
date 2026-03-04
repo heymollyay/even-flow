@@ -108,6 +108,17 @@ object UserData {
         return getPreferences(context).getInt(KEY_OVULATION_LENGTH, 2)
     }
 
+    fun saveLastPeriodStart(context: Context, epochMs: Long?) {
+        if (epochMs != null) {
+            getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs)
+                .apply() //convert date to ms
+        }
+    }
+    fun getLastPeriodStart(context: Context): Long? {
+        val value = getPreferences(context).getLong(KEY_LAST_PERIOD_START, -1L)
+        return if (value == -1L) null else value
+    }
+
 
 
 

@@ -28,9 +28,15 @@ import com.example.periodtracker.ui.Onboarding.OnboardingScreen
 import com.example.periodtracker.ui.ProfileScreen
 import com.example.periodtracker.ui.JournalScreen
 import androidx.fragment.app.FragmentActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
+import androidx.compose.material3.Button
 
 
-class MainActivity : FragmentActivity() { //updated for biometrics activity tracking DO NOT CHANGE
+class MainActivity : FragmentActivity() { //updated for biometrics activity tracking DO NOT CHANGE: FRAGMENT IS NEEDED
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
