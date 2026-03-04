@@ -21,7 +21,7 @@ fun OnboardingScreen(onFinish: () -> Unit, modifier: Modifier = Modifier)
 
     var username by remember { mutableStateOf(UserData.getUsername(context)) }
 
-    var lastPeriod by remember { mutableStateOf<Long?>(UserData.getLastPeriodStart(context))}
+    var lastPeriod by remember { mutableStateOf<Long?>(UserData.getLastPeriodEnd(context))}
 
     var periodLength by remember { mutableIntStateOf(UserData.getMenstrualLength(context)) }
 
@@ -44,7 +44,7 @@ fun OnboardingScreen(onFinish: () -> Unit, modifier: Modifier = Modifier)
             answer = lastPeriod,
             onAnswerChange = {lastPeriod = it},
             onNext = {
-                UserData.saveLastPeriodStart(context,lastPeriod)
+                UserData.saveLastPeriodEnd(context,lastPeriod)
                 currentQuestion++}
 
         )
@@ -55,6 +55,7 @@ fun OnboardingScreen(onFinish: () -> Unit, modifier: Modifier = Modifier)
                 UserData.saveMenstrualLength(context,periodLength)
                 currentQuestion++ }
         )
+        //Change so that Contraceptives is first because hormonal BC makes the cycle 28.
         4 -> OnboardingCycleLengthQuestion(
             answer = cycleLength,
             onAnswerChange = {cycleLength = it},
@@ -66,6 +67,8 @@ fun OnboardingScreen(onFinish: () -> Unit, modifier: Modifier = Modifier)
             onComplete = { onFinish() }
         )
     }
+
+
 }
 
 

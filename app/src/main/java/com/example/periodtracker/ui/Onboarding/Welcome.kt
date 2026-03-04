@@ -60,7 +60,7 @@ fun OnboardingWelcome(onContinueClicked: () -> Unit, modifier: Modifier = Modifi
 
         //tagline
         Text(
-            text = "tracking your period just got easier.",
+            text = "Tracking your period just got easier.",
             color = White.copy(alpha = 0.85f),
             fontSize = 16.sp,
             textAlign = TextAlign.Center

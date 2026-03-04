@@ -20,6 +20,8 @@ object UserData {
     private const val KEY_LUTEAL_LENGTH = "luteal_length"
     private const val KEY_OVULATION_LENGTH = "ovulation_length"
 
+    private const val KEY_DAYS_UNTIL_MENSTRUATION = "days_until_menstruation"
+
 
     private fun getPreferences(context: Context) = EncryptedSharedPreferences.create(
         context,
@@ -108,16 +110,14 @@ object UserData {
         return getPreferences(context).getInt(KEY_OVULATION_LENGTH, 2)
     }
 
-    fun saveLastPeriodStart(context: Context, epochMs: Long?) {
-        if (epochMs != null) {
-            getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs)
-                .apply() //convert date to ms
-        }
+    fun saveDaysUntilMenstruation(context: Context, days: Int) {
+        getPreferences(context).edit().putInt(KEY_DAYS_UNTIL_MENSTRUATION, days).apply()
     }
-    fun getLastPeriodStart(context: Context): Long? {
-        val value = getPreferences(context).getLong(KEY_LAST_PERIOD_START, -1L)
-        return if (value == -1L) null else value
+
+    fun getDaysUntilMenstruation(context: Context): Int {
+        return getPreferences(context).getInt(KEY_DAYS_UNTIL_MENSTRUATION, 0)
     }
+
 
 
 

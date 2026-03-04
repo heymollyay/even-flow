@@ -38,7 +38,7 @@ fun OnboardingLastPeriodQuestion(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment =  Alignment.CenterHorizontally
     ) {
-        Text("What date did your last period start?")
+        Text("What date did your last period end?")
         Button(onClick = {showModal = true}) {
             Text(if (answer != null) convertMillisToDate(answer) else "Select Date")
         }

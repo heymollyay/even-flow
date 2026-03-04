@@ -25,8 +25,6 @@ import androidx.compose.ui.unit.dp
 fun OnboardingContraceptivesQuestion(
     onComplete: () -> Unit,
     modifier: Modifier = Modifier,
-
-
 ) {
 
     var showOptions by remember {mutableStateOf(false)}
