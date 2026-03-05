@@ -32,16 +32,32 @@ import androidx.fragment.app.FragmentActivity //UPDATED TO USE THIS FOR BIOMETRI
 @Composable
 fun JournalScreen() {
     var showEntryForm by remember { mutableStateOf(false) }
+    var entryToEdit by remember { mutableStateOf<CycleData?>(null) }
 
     if (showEntryForm) {
-        JournalEntryForm(onBack = { showEntryForm = false })
+        JournalEntryForm(
+            entryToEdit = entryToEdit,
+            onBack = {
+                showEntryForm = false
+                entryToEdit = null
+            }
+        )
     } else {
-        JournalListScreen(onAddEntry = { showEntryForm = true })
+        JournalListScreen(
+            onAddEntry = {
+                entryToEdit = null
+                showEntryForm = true
+            },
+            onEditEntry = { entry ->
+                entryToEdit = entry
+                showEntryForm = true
+            }
+        )
     }
 }
 
 @Composable
-fun JournalListScreen(onAddEntry: () -> Unit) {
+fun JournalListScreen(onAddEntry: () -> Unit, onEditEntry: (CycleData) -> Unit) {
     val context = LocalContext.current
     val db = remember { AppDatabase.getInstance(context) }
     val entries by db.cycleDao().getAll().collectAsState(initial = emptyList())
@@ -72,7 +88,7 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
             )
 
             Text(
-                text = "Your cycle entries.",
+                text = "Your cycle entries.\n\n",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -100,7 +116,11 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
             } else {
                 LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     items(entries) { entry ->
-                        JournalEntryCard(entry = entry)
+                        JournalEntryCard(
+                            entry = entry,
+                            onDelete = {scope.launch { db.cycleDao().delete(entry)} },
+                            onEdit = {onEditEntry(entry)}
+                        )
                     }
                 }
             }
@@ -131,7 +151,7 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
                 }
             },
             modifier = Modifier
-                .align(Alignment.BottomCenter)
+                .align(Alignment.TopCenter)
                 .padding(all = 60.dp)
                 .fillMaxWidth(0.4f)
                 .height(52.dp),
@@ -151,7 +171,7 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
         FloatingActionButton(
             onClick = onAddEntry,
             modifier = Modifier
-                .align(Alignment.BottomEnd)
+                .align(Alignment.TopEnd)
                 .padding(24.dp),
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = MaterialTheme.colorScheme.primary
@@ -162,7 +182,7 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
 }
 
 @Composable
-fun JournalEntryCard(entry: CycleData) {
+fun JournalEntryCard(entry: CycleData, onDelete: (CycleData) -> Unit, onEdit: (CycleData) -> Unit ) {
     val date = try { EncryptionManager.decrypt(entry.encryptedDate) } catch (e: Exception) { "Unknown" }
     val flow = try { EncryptionManager.decrypt(entry.encryptedFlow) } catch (e: Exception) { "" }
     val notes = try { EncryptionManager.decrypt(entry.encryptedNotes) } catch (e: Exception) { "" }
@@ -175,8 +195,8 @@ fun JournalEntryCard(entry: CycleData) {
         )
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
@@ -189,18 +209,40 @@ fun JournalEntryCard(entry: CycleData) {
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary
                 )
-                if (flow.isNotBlank() && flow != "None") {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(MaterialTheme.colorScheme.primary)
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (flow.isNotBlank() && flow != "None") {
+                        Box(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(MaterialTheme.colorScheme.primary)
+                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                        ) {
+                            Text(
+                                text = flow,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        }
+                    }
+                    TextButton(
+                        onClick = { onEdit(entry) },
+                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
                     ) {
                         Text(
-                            text = flow,
-                            style = MaterialTheme.typography.labelMedium,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.SemiBold
+                            "Edit",
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+                    TextButton(
+                        onClick = { onDelete(entry) },
+                        contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
+                    ) {
+                        Text(
+                            "Delete",
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.labelMedium
                         )
                     }
                 }
@@ -209,7 +251,8 @@ fun JournalEntryCard(entry: CycleData) {
                 Text(
                     text = notes,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(bottom = 4.dp)
                 )
             }
         }
@@ -217,14 +260,32 @@ fun JournalEntryCard(entry: CycleData) {
 }
 
 @Composable
-fun JournalEntryForm(onBack: () -> Unit) {
+fun JournalEntryForm(entryToEdit: CycleData? = null, onBack: () -> Unit) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val db = remember { AppDatabase.getInstance(context) }
 
-    var selectedDate by remember { mutableStateOf(LocalDate.now().toString()) }
-    var selectedFlow by remember { mutableStateOf("") }
-    var notes by remember { mutableStateOf("") }
+    var selectedDate by remember {
+        mutableStateOf(
+            if (entryToEdit != null)
+                try { EncryptionManager.decrypt(entryToEdit.encryptedDate) } catch (e: Exception) { "" }
+            else LocalDate.now().toString()
+        )
+    }
+    var selectedFlow by remember {
+        mutableStateOf(
+            if (entryToEdit != null)
+                try { EncryptionManager.decrypt(entryToEdit.encryptedFlow) } catch (e: Exception) { "" }
+            else ""
+        )
+    }
+    var notes by remember {
+        mutableStateOf(
+            if (entryToEdit != null)
+                try { EncryptionManager.decrypt(entryToEdit.encryptedNotes) } catch (e: Exception) { "" }
+            else ""
+        )
+    }
     var saved by remember { mutableStateOf(false) }
 
     val flowOptions = listOf("None", "Light", "Medium", "Heavy", "Abnormal")
@@ -240,7 +301,7 @@ fun JournalEntryForm(onBack: () -> Unit) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "New Entry",
+                text = if (entryToEdit != null) "Edit Entry" else "New Entry",
                 style = MaterialTheme.typography.displaySmall,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimary
@@ -360,15 +421,21 @@ fun JournalEntryForm(onBack: () -> Unit) {
                 onClick = {
                     scope.launch {
                         val entry = CycleData(
+                            id = entryToEdit?.id ?: 0,
                             encryptedDate = EncryptionManager.encrypt(selectedDate.trim()),
                             encryptedFlow = EncryptionManager.encrypt(selectedFlow.ifBlank { "None" }),
                             encryptedNotes = EncryptionManager.encrypt(notes.trim())
                         )
-                        db.cycleDao().insert(entry)
+                        if (entryToEdit != null) {
+                            db.cycleDao().update(entry)
+                        } else {
+                            db.cycleDao().insert(entry)
+                        }
                         saved = true
                         selectedFlow = ""
                         notes = ""
                     }
+                    onBack()
                 },
                 modifier = Modifier.fillMaxWidth().height(52.dp),
                 shape = RoundedCornerShape(16.dp),
@@ -398,6 +465,7 @@ fun JournalEntryForm(onBack: () -> Unit) {
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
+
         FloatingActionButton(
             onClick = onBack,
             modifier = Modifier
@@ -408,6 +476,5 @@ fun JournalEntryForm(onBack: () -> Unit) {
         ) {
             Text("←", style = MaterialTheme.typography.titleLarge)
         }
-
     }
 }
