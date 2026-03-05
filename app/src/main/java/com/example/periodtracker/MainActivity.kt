@@ -32,6 +32,7 @@ import com.example.periodtracker.ui.ProfileScreen
 import com.example.periodtracker.ui.CalendarScreen
 import com.example.periodtracker.ui.Welcome
 import com.example.periodtracker.onboarding.OnboardingQuiz
+import androidx.biometric.BiometricManager
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -88,14 +89,23 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
         !isAuthenticated -> {
             Login(
                 onContinueClicked = {
-                    if (activity != null) {
+                    val manager = BiometricManager.from(context)
+                    val hasCredential = manager.canAuthenticate(
+                        BiometricManager.Authenticators.DEVICE_CREDENTIAL
+                    ) == BiometricManager.BIOMETRIC_SUCCESS
+
+                    if (!hasCredential) {
+                        android.widget.Toast.makeText(
+                            context,
+                            "Please set up a PIN or biometric lock in your device settings.",
+                            android.widget.Toast.LENGTH_LONG
+                        ).show()
+                    } else if (activity != null) {
                         Biometrics.authenticate(
                             activity = activity,
                             title = "Even Flow",
                             subtitle = "Verify your identity to enter app",
-                            onSuccess = {
-                                isAuthenticated = true  // ← THIS was missing
-                            },
+                            onSuccess = { isAuthenticated = true },
                             onFailure = { errorCode ->
                                 if (errorCode == BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL) {
                                     android.widget.Toast.makeText(
