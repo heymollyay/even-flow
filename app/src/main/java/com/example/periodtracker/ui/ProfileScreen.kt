@@ -17,14 +17,36 @@ import com.example.periodtracker.data.UserData
 import androidx.fragment.app.FragmentActivity //UPDATED TO USE THIS FOR BIOMETRICS CAPABILITY
 import com.example.periodtracker.Biometrics
 import androidx.biometric.BiometricPrompt
+import androidx.compose.foundation.clickable
+import androidx.compose.material.icons.filled.DateRange
+import com.example.periodtracker.ui.onboarding.DatePickerModal
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileScreen() {
     val context = LocalContext.current
     var username by remember { mutableStateOf(UserData.getUsername(context)) }
     var editMode by remember { mutableStateOf(false) }
     var tempUsername by remember { mutableStateOf("") }
+    var cycleLength by remember { mutableStateOf(UserData.getCycleLength(context).toString()) }
+    var periodLength by remember { mutableStateOf(UserData.getMenstrualLength(context).toString()) }
+    var lastPeriod by remember { mutableStateOf<Long?>(UserData.getLastPeriodEnd(context)) }
+    var contraceptive by remember { mutableStateOf(UserData.getLongTermContraceptives(context)) }
+
+    var contraceptiveExpanded by remember { mutableStateOf(false) }
+
+    val contraceptiveOptions = listOf(
+        "Pill",
+        "IUD",
+        "Implant",
+        "Patch",
+        "Injection",
+        "Ring"
+
+    )
+
+
     //uses main's activity tracker (which MUST be AppCompatActivity: FragmentActivity for biometrics )
     val activity = remember(context) {
         var ctx: android.content.Context = context
@@ -89,10 +111,141 @@ fun ProfileScreen() {
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 4.dp),
+                        color = MaterialTheme.colorScheme.outline.copy(alpha=0.4f)
+                    )
+
+                    //edit period length
+                    OutlinedTextField(
+                        value = periodLength,
+                        onValueChange = { value ->
+                            if (value.all { it.isDigit() } && value.length <= 2) {
+                                periodLength = value
+                            }
+                        },
+                        label = { Text("Period length (days)") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    //edit cycle length
+                    OutlinedTextField(
+                        value = cycleLength,
+                        onValueChange = { value ->
+                            if (value.all { it.isDigit() } && value.length <= 2) {
+                                cycleLength = value
+                            }
+                        },
+                        label = { Text("Cycle length (days)") },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    //date of last period
+
+                    var showDatePicker by remember { mutableStateOf(false) }
+
+                    val displayDate = remember(lastPeriod) {
+                        lastPeriod?.let {
+                            val sdf = java.text.SimpleDateFormat("dd / MM / yyyy", java.util.Locale.getDefault())
+                            sdf.format(java.util.Date(it))
+                        } ?: ""
+                    }
+
+                    if (showDatePicker) {
+                        DatePickerModal(
+                            onDateSelected = { millis ->
+                                lastPeriod = millis
+                                showDatePicker = false
+                            },
+                            onDismiss = { showDatePicker = false }
+                        )
+                    }
+
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = "End of last period (date)",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.surface)
+                                .clickable { showDatePicker = true }
+                                .padding(horizontal = 20.dp, vertical = 18.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = displayDate.ifEmpty { "DD / MM / YYYY" },
+                                    color = if (displayDate.isEmpty())
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    else
+                                        MaterialTheme.colorScheme.onSurface
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.DateRange,
+                                    contentDescription = "Pick date",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    //contraceptives
+                    ExposedDropdownMenuBox(
+                        expanded = contraceptiveExpanded,
+                        onExpandedChange = { contraceptiveExpanded = !contraceptiveExpanded },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = contraceptive,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Hormonal contraceptive use") },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = contraceptiveExpanded)
+                            },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
+                        )
+                        ExposedDropdownMenu(
+                            expanded = contraceptiveExpanded,
+                            onDismissRequest = { contraceptiveExpanded = false }
+                        ) {
+                            contraceptiveOptions.forEach { option ->
+                                DropdownMenuItem(
+                                    text = { Text(option) },
+                                    onClick = {
+                                        contraceptive = option
+                                        contraceptiveExpanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         // save button - immediately overwrites old username with new one
                         Button(onClick = {
                             UserData.saveUsername(context, tempUsername)
+                            UserData.saveCycleLength(context, cycleLength.toInt())
+                            UserData.saveMenstrualLength(context, periodLength.toInt())
+                            UserData.saveLastPeriodEnd(context, lastPeriod)
+                            UserData.saveLongTermContraceptives(context, contraceptive)
+
                             username = tempUsername
                             editMode = false
                         }) {
