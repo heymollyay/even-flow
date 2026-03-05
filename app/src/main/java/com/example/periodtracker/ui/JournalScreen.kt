@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -196,11 +197,11 @@ fun JournalEntryCard(entry: CycleData, onDelete: (CycleData) -> Unit, onEdit: (C
     ) {
         Column(
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -209,7 +210,9 @@ fun JournalEntryCard(entry: CycleData, onDelete: (CycleData) -> Unit, onEdit: (C
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.primary
                 )
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)){
+                    //flow
                     if (flow.isNotBlank() && flow != "None") {
                         Box(
                             modifier = Modifier
@@ -225,6 +228,7 @@ fun JournalEntryCard(entry: CycleData, onDelete: (CycleData) -> Unit, onEdit: (C
                             )
                         }
                     }
+                    //edit entry button
                     TextButton(
                         onClick = { onEdit(entry) },
                         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
@@ -235,6 +239,7 @@ fun JournalEntryCard(entry: CycleData, onDelete: (CycleData) -> Unit, onEdit: (C
                             style = MaterialTheme.typography.labelMedium
                         )
                     }
+                    //delete entry
                     TextButton(
                         onClick = { onDelete(entry) },
                         contentPadding = PaddingValues(horizontal = 6.dp, vertical = 0.dp)
