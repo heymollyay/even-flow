@@ -1,4 +1,4 @@
-package com.example.periodtracker.ui.onboarding
+package com.example.periodtracker.onboarding
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.foundation.layout.*
