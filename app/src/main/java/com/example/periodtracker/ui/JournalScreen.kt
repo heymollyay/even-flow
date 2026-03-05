@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.periodtracker.Biometrics
 import com.example.periodtracker.EncryptionManager
 import com.example.periodtracker.data.AppDatabase
 import com.example.periodtracker.data.CycleData
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.example.periodtracker.ui.theme.PeriodRed
 import com.example.periodtracker.data.DataExport
+import androidx.fragment.app.FragmentActivity //UPDATED TO USE THIS FOR BIOMETRICS CAPABILITY
 
 @Composable
 fun JournalScreen() {
@@ -46,6 +48,14 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
     val entries by db.cycleDao().getAll().collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
     var exportMessage by remember { mutableStateOf("") }
+    val activity = remember(context) {
+        var ctx: android.content.Context = context
+        while (ctx is android.content.ContextWrapper) {
+            if (ctx is FragmentActivity) return@remember ctx
+            ctx = ctx.baseContext
+        }
+        null
+    }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(
@@ -100,9 +110,25 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
         //export button
         FloatingActionButton(
             onClick = {
-                scope.launch {
-                    val success = DataExport.exportToCSV(context, entries)
-                    exportMessage = if (success) "Exported to Downloads." else "Export failed."
+                if (activity != null) {
+                    Biometrics.authenticate(
+                        activity = activity,
+                        title = "Even Flow",
+                        subtitle = "Verify your identity to export data",
+                        onSuccess = {
+                            scope.launch {
+                                val success = DataExport.exportToCSV(context, entries)
+                                exportMessage = if (success) "Exported to Downloads." else "Export failed."
+                            }
+                        },
+                        onFailure = {
+                            android.widget.Toast.makeText(
+                                context,
+                                "Authentication required to export data.",
+                                android.widget.Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    )
                 }
             },
             modifier = Modifier
@@ -115,12 +141,13 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
             contentColor = MaterialTheme.colorScheme.primary
         ) {
             Text(
-                text = " EXPORT ",
+                text = "EXPORT",
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MaterialTheme.colorScheme.primary
             )
         }
+
         // FAB add button
         FloatingActionButton(
             onClick = onAddEntry,
