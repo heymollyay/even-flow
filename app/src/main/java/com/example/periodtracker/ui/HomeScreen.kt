@@ -1,5 +1,6 @@
 package com.example.periodtracker.ui
 
+import android.content.Context
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -38,8 +39,14 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import androidx.compose.foundation.Image
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import com.example.periodtracker.R
+import com.example.periodtracker.calculateCurrentDay
+import com.example.periodtracker.calculateCurrentPhase
+import com.example.periodtracker.calculateDaysTillNextPeriod
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 @Composable
@@ -80,19 +87,20 @@ fun HomeScreen() {
 
         WeeklyCalendarHeader()
 
+        calculateDaysTillNextPeriod(context)
         val daysUntilNextPeriod = UserData.getDaysUntilMenstruation(context)
 
         Spacer(modifier = Modifier.height(24.dp))
+
+        calculateCurrentDay(context)
+
+        val currentDay = UserData.getCurrentDay(context)
 
         PhaseChart(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(320.dp),
             input = listOf(
-                PhaseInput(
-                    color = LutealPink,
-                    value = UserData.getLutealLength(context),
-                ),
                 PhaseInput(
                     color = PeriodRed,
                     value = UserData.getMenstrualLength(context),
@@ -105,9 +113,14 @@ fun HomeScreen() {
                     color = OvulationPurple,
                     value = UserData.getOvulationLength(context),
                 ),
+                PhaseInput(
+                    color = LutealPink,
+                    value = UserData.getLutealLength(context),
+                ),
+
             ),
-            centerText = if (daysUntilNextPeriod <= 0) "Menstruating" else
-                "$daysUntilNextPeriod days until menstruation"
+            centerText = "day $currentDay",
+            currentDay = currentDay
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -115,6 +128,9 @@ fun HomeScreen() {
         CyclePhaseKey(
             modifier = Modifier.padding(vertical = 12.dp)
         )
+        CyclePhase(
+            modifier = Modifier.padding(vertical = 12.dp),
+            context = context)
 
 
     }
@@ -186,7 +202,8 @@ fun PhaseChart(
     radius:Float = 500f,
     innerRadius:Float = 250f,
     input:List<PhaseInput>,
-    centerText:String = "days until menstruation"
+    centerText:String = "days until menstruation",
+    currentDay: Int = 0
 ) {
     var circleCenter by remember {
         mutableStateOf(Offset.Zero)
@@ -208,7 +225,7 @@ fun PhaseChart(
                 it.value
             }
             val anglePerValue = 360f/totalValue
-            var currentStartAngle = 0f
+            var currentStartAngle = -90f
 
             input.forEach {
                 phaseInput ->
@@ -233,7 +250,7 @@ fun PhaseChart(
                 }
                 var rotateAngle = currentStartAngle-angleToDraw/2f-90f
                 var factor = 1f
-                if(rotateAngle>90f){
+                if(rotateAngle>90f || rotateAngle < -90f){
                     rotateAngle = (rotateAngle+180).mod(360f)
                     factor = -0.92f
                 }
@@ -255,6 +272,25 @@ fun PhaseChart(
                     }
                 }
             }
+
+            //dial to indicate where you are in cycle
+
+            if (currentDay > 0) {
+                val dayAngle = (currentDay - 1) * anglePerValue - 90f
+                val angleRad = Math.toRadians(dayAngle.toDouble()).toFloat()
+                val overhang = 24f
+
+                drawLine(
+                    color = Color.White,
+                    start = circleCenter,
+                    end = Offset(
+                        x = circleCenter.x + (radius + overhang) * cos(angleRad),
+                        y = circleCenter.y + (radius + overhang) * sin(angleRad)
+                    ),
+                    strokeWidth = 24f
+                )
+            }
+
             drawContext.canvas.nativeCanvas.apply {
                 drawCircle(
                     circleCenter.x,
@@ -273,7 +309,7 @@ fun PhaseChart(
                 .width(Dp(innerRadius/1.5f))
                 .padding(25.dp),
             fontWeight = FontWeight.SemiBold,
-            fontSize = 17.sp,
+            style = MaterialTheme.typography.displaySmall,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
@@ -338,4 +374,46 @@ fun PhaseKeyItem(label: String, color: Color) {
         )
     }
 }
+
+@Composable
+fun CyclePhase(modifier: Modifier, context:Context) {
+
+    calculateCurrentPhase(context)
+    val currentPhase = UserData.getCyclePhase(context)
+
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.primaryContainer)
+
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier.fillMaxWidth()
+                .padding(vertical = 24.dp)
+        ) {
+                Text(
+                "You are in the $currentPhase phase.",
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            Spacer(modifier = Modifier.width(8.dp))
+
+                Image(
+                    painter = painterResource(id = R.drawable.basiclogo),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .size(24.dp)
+
+                )
+
+            }
+
+        }
+    }
+
+
 

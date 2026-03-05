@@ -29,7 +29,7 @@ import com.example.periodtracker.ui.theme.DeepPurple
 import com.example.periodtracker.ui.theme.White
 
 @Composable
-fun Welcome(onContinueClicked: () -> Unit,
+fun Login(onContinueClicked: () -> Unit,
             modifier: Modifier = Modifier
 ) {
     Column(
@@ -41,7 +41,7 @@ fun Welcome(onContinueClicked: () -> Unit,
     ) {
         //logo
         Image(
-            painter = painterResource(R.drawable.logo),
+            painter = painterResource(R.drawable.lockedlogo),
             contentDescription = "Even Flow logo",
             modifier = Modifier.size(260.dp)
         )
@@ -84,7 +84,7 @@ fun Welcome(onContinueClicked: () -> Unit,
             shape = RoundedCornerShape(50)
         ) {
             Text(
-                text = "Continue",
+                text = "Login",
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 16.sp
             )

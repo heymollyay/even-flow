@@ -15,6 +15,6 @@ data class CycleData(
     val encryptedDate: String,
     val encryptedFlow: String,
     val encryptedNotes: String,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
 )
 

@@ -62,7 +62,6 @@ fun OnboardingQuiz(onFinish: () -> Unit, modifier: Modifier = Modifier) {
 
     when (currentQuestion) {
         0 -> Welcome(
-            buttonName = "Continue",
             onContinueClicked = { currentQuestion++ }
         )
         1 -> OnboardingUsernameQuestion(
@@ -357,7 +356,7 @@ fun OnboardingPeriodDurationQuestion(
         )
         InputField(
             value = if (answer == 0) "" else answer.toString(),
-            onValueChange = { onAnswerChange(it.toIntOrNull() ?: 0) },
+            onValueChange = { if (it.length <= 2) onAnswerChange(it.toIntOrNull() ?: 0) },
             placeholder = "Enter number of days...",
             keyboardType = KeyboardType.Number
         )
@@ -381,7 +380,7 @@ fun OnboardingCycleLengthQuestion(
         )
         InputField(
             value = if (answer == 0) "" else answer.toString(),
-            onValueChange = { onAnswerChange(it.toIntOrNull() ?: 0) },
+            onValueChange = { if (it.length <= 2) onAnswerChange(it.toIntOrNull() ?: 0) },
             placeholder = "Enter number of days...",
             keyboardType = KeyboardType.Number
         )

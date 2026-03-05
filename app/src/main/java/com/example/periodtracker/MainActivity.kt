@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
 import com.example.periodtracker.ui.HomeScreen
 import com.example.periodtracker.ui.JournalScreen
+import com.example.periodtracker.ui.Login
 import com.example.periodtracker.ui.ProfileScreen
 import com.example.periodtracker.ui.Welcome
 import com.example.periodtracker.ui.onboarding.OnboardingQuiz
@@ -79,13 +80,13 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
             OnboardingQuiz(
                 onFinish = {
                     calculatePhaseLengths(context)
+                    calculateDaysTillNextPeriod(context)
                     shouldShowOnboarding = false
                 }
             )
         }
         !isAuthenticated -> {
-            Welcome(
-                buttonName= "Login",
+            Login(
                 onContinueClicked = {
                     if (activity != null) {
                         Biometrics.authenticate(

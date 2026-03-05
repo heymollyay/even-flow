@@ -57,9 +57,9 @@ fun calculatePhaseLengths(context: Context) {
 
 fun calculateDaysTillNextPeriod(context:Context) {
     val cycleLength = UserData.getCycleLength(context)
-
-    //Days until next period
     val today = LocalDate.now()
+
+
     //lastPeriod needs to be updated each time after a period happens so that days since stays updated.
     val lastPeriod = UserData.getLastPeriodEnd(context)?.let { epochMs ->
         Instant.ofEpochMilli(epochMs)
@@ -73,3 +73,46 @@ fun calculateDaysTillNextPeriod(context:Context) {
 
     UserData.saveDaysUntilMenstruation(context,daysUntilNextPeriod.toInt())
 }
+
+fun calculateCurrentDay(context:Context) {
+    val cycleLength = UserData.getCycleLength(context)
+    val daysUntilPeriod = UserData.getDaysUntilMenstruation(context)
+    val currentDay = cycleLength - daysUntilPeriod
+
+    UserData.saveCurrentDay(context, currentDay)
+}
+
+fun calculateCurrentPhase(context:Context)
+{
+    val cycleLength = UserData.getCycleLength(context)
+    val menstrualLength = UserData.getMenstrualLength(context)
+    val ovulationLength = UserData.getOvulationLength(context)
+    val follicularLength = UserData.getFollicularLength(context)
+    val lutealLength = UserData.getLutealLength(context)
+
+    val daysUntilPeriod = UserData.getDaysUntilMenstruation(context)
+    val currentDay = cycleLength - daysUntilPeriod
+
+    val startDayFollicular = menstrualLength + 1
+    val endDayFollicular   = menstrualLength + follicularLength
+
+    val startDayOvulation  = endDayFollicular + 1
+    val endDayOvulation    = endDayFollicular + ovulationLength
+
+    val startDayLuteal     = endDayOvulation + 1
+    val endDayLuteal       = endDayOvulation + lutealLength
+
+    val currentPhase = when (currentDay) {
+        in 1..menstrualLength                   -> "menstruation"
+        in startDayFollicular..endDayFollicular -> "follicular"
+        in startDayOvulation..endDayOvulation   -> "ovulation"
+        in startDayLuteal..endDayLuteal         -> "luteal"
+        else -> "unknown"
+    }
+
+    UserData.saveCyclePhase(context, currentPhase)
+
+
+
+}
+
