@@ -1,5 +1,6 @@
 package com.example.periodtracker.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -15,10 +16,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.periodtracker.R
 import com.example.periodtracker.data.UserData
 import java.time.LocalDate
 import java.time.YearMonth
@@ -94,6 +97,14 @@ fun CalendarScreen() {
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
+        //greeting
+        Text(
+            text = "Calendar",
+            style = MaterialTheme.typography.displaySmall,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+
         // Phase indicator card
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -110,44 +121,16 @@ fun CalendarScreen() {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "You are in the ${getCurrentPhaseName(context)}",
-                    modifier = Modifier.weight(1f),
+                    "You are in the ${getCurrentPhaseName(context)} phase.",
                     style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-                Text("✿", fontSize = 20.sp, color = LutealColor)
-            }
-        }
-
-        // Legend
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            listOf(
-                "Luteal" to LutealColor,
-                "Period" to MenstruationColor,
-                "Follicular" to FollicularColor,
-                "Ovulation" to OvulationColor
-            ).forEach { (label, color) ->
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(10.dp)
-                            .clip(CircleShape)
-                            .background(color)
-                    )
-                    Text(
-                        text = label,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
+                Image(
+                    painter = painterResource(id = R.drawable.basiclogo),
+                    contentDescription = "Logo",
+                    modifier = Modifier
+                        .size(24.dp)
+                )
             }
         }
 
@@ -212,6 +195,36 @@ fun CalendarScreen() {
             }
         }
 
+        // Legend
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            listOf(
+                "Luteal" to LutealColor,
+                "Period" to MenstruationColor,
+                "Follicular" to FollicularColor,
+                "Ovulation" to OvulationColor
+            ).forEach { (label, color) ->
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(10.dp)
+                            .clip(CircleShape)
+                            .background(color)
+                    )
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+        }
         Spacer(modifier = Modifier.height(16.dp))
     }
 }
