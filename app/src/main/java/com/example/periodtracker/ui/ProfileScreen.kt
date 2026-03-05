@@ -267,6 +267,7 @@ fun ProfileScreen() {
                     //edit button on profile overview
                     OutlinedButton(
                         onClick = {
+                            //biometrics check
                             if (activity != null) {
                                 Biometrics.authenticate(
                                     activity = activity,
