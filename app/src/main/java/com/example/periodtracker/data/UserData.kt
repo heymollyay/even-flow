@@ -22,6 +22,8 @@ object UserData {
 
     private const val KEY_DAYS_UNTIL_MENSTRUATION = "days_until_menstruation"
 
+    private const val KEY_CYCLE_PHASE = "cycle_phase"
+
 
     private fun getPreferences(context: Context) = EncryptedSharedPreferences.create(
         context,
@@ -118,9 +120,20 @@ object UserData {
         return getPreferences(context).getInt(KEY_DAYS_UNTIL_MENSTRUATION, 0)
     }
 
+    fun saveCyclePhase(context: Context, phase: String) {
+        getPreferences(context).edit().putString(KEY_CYCLE_PHASE, phase).apply()
+    }
 
+    fun getCyclePhase(context: Context): String {
+        return getPreferences(context).getString(KEY_CYCLE_PHASE, "follicular")?:""
+    }
 
+    fun saveCurrentDay(context: Context, phase: Int) {
+        getPreferences(context).edit().putInt(KEY_CYCLE_PHASE, phase).apply()
+    }
 
+    fun getCurrentDay(context: Context): Int {
+        return getPreferences(context).getInt(KEY_CYCLE_PHASE, 0)
 
-
+    }
 }

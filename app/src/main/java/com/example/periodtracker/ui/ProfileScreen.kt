@@ -19,6 +19,9 @@ import com.example.periodtracker.Biometrics
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.DateRange
+import com.example.periodtracker.calculateCurrentPhase
+import com.example.periodtracker.calculateDaysTillNextPeriod
+import com.example.periodtracker.calculatePhaseLengths
 import com.example.periodtracker.ui.onboarding.DatePickerModal
 
 
@@ -45,7 +48,6 @@ fun ProfileScreen() {
         "Ring"
 
     )
-
 
     //uses main's activity tracker (which MUST be AppCompatActivity: FragmentActivity for biometrics )
     val activity = remember(context) {
@@ -245,6 +247,11 @@ fun ProfileScreen() {
                             UserData.saveMenstrualLength(context, periodLength.toInt())
                             UserData.saveLastPeriodEnd(context, lastPeriod)
                             UserData.saveLongTermContraceptives(context, contraceptive)
+
+                            //Update logic very important
+                            calculatePhaseLengths(context)
+                            calculateDaysTillNextPeriod(context)
+                            calculateCurrentPhase(context)
 
                             username = tempUsername
                             editMode = false
