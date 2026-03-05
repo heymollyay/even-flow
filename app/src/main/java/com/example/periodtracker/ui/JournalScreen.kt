@@ -111,7 +111,7 @@ fun JournalListScreen(onAddEntry: () -> Unit, onEditEntry: (CycleData) -> Unit) 
                     Text(
                         text = "No entries yet. Tap + to add one.",
                         style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             } else {

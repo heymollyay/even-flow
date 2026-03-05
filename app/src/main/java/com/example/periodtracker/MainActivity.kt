@@ -97,7 +97,7 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
                     if (!hasCredential) {
                         android.widget.Toast.makeText(
                             context,
-                            "Please set up a PIN or biometric lock in your device settings.",
+                            "This app requires password protection for your data. Please set up a PIN or biometric lock in your device settings.",
                             android.widget.Toast.LENGTH_LONG
                         ).show()
                     } else if (activity != null) {
