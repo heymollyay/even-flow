@@ -26,7 +26,7 @@ import com.example.periodtracker.data.CycleData
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import com.example.periodtracker.ui.theme.PeriodRed
-
+import com.example.periodtracker.data.DataExport
 
 @Composable
 fun JournalScreen() {
@@ -44,6 +44,8 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
     val context = LocalContext.current
     val db = remember { AppDatabase.getInstance(context) }
     val entries by db.cycleDao().getAll().collectAsState(initial = emptyList())
+    val scope = rememberCoroutineScope()
+    var exportMessage by remember { mutableStateOf("") }
 
     Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
         Column(
@@ -65,6 +67,13 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
+            if (exportMessage.isNotEmpty()) {
+                Text(
+                    text = exportMessage,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onPrimary
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -88,6 +97,30 @@ fun JournalListScreen(onAddEntry: () -> Unit) {
             }
         }
 
+        //export button
+        FloatingActionButton(
+            onClick = {
+                scope.launch {
+                    val success = DataExport.exportToCSV(context, entries)
+                    exportMessage = if (success) "Exported to Downloads." else "Export failed."
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(all = 60.dp)
+                .fillMaxWidth(0.4f)
+                .height(52.dp),
+            shape = RoundedCornerShape(16.dp),
+            containerColor = MaterialTheme.colorScheme.primaryContainer,
+            contentColor = MaterialTheme.colorScheme.primary
+        ) {
+            Text(
+                text = " EXPORT ",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
         // FAB add button
         FloatingActionButton(
             onClick = onAddEntry,
