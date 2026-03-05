@@ -394,7 +394,7 @@ fun CyclePhase(modifier: Modifier, context:Context) {
             modifier = Modifier.fillMaxWidth()
                 .padding(vertical = 24.dp)
         ) {
-                Text(
+            Text(
                 "You are in the $currentPhase phase.",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant

@@ -22,8 +22,7 @@ import androidx.compose.material.icons.filled.DateRange
 import com.example.periodtracker.calculateCurrentPhase
 import com.example.periodtracker.calculateDaysTillNextPeriod
 import com.example.periodtracker.calculatePhaseLengths
-import com.example.periodtracker.ui.onboarding.DatePickerModal
-
+import com.example.periodtracker.onboarding.DatePickerModal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

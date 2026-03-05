@@ -29,9 +29,9 @@ import com.example.periodtracker.ui.HomeScreen
 import com.example.periodtracker.ui.JournalScreen
 import com.example.periodtracker.ui.Login
 import com.example.periodtracker.ui.ProfileScreen
+import com.example.periodtracker.ui.CalendarScreen
 import com.example.periodtracker.ui.Welcome
-import com.example.periodtracker.ui.onboarding.OnboardingQuiz
-
+import com.example.periodtracker.onboarding.OnboardingQuiz
 
 class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -145,8 +145,6 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
         }
     }
 }
-
-@Composable fun CalendarScreen() { Text("Calendar")}
 
 enum class AppDestinations(
     val label: String,
