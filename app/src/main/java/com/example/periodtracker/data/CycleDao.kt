@@ -5,6 +5,7 @@ package com.example.periodtracker.data
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Delete
+import androidx.room.Update
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow //datatype for stream data - NOT part of our app
 
@@ -15,4 +16,11 @@ interface CycleDao {
 
     @Insert
     suspend fun insert(entry: CycleData)
+
+    @Delete
+    suspend fun delete(entry:CycleData)
+
+    @Update
+    suspend fun update(entry: CycleData)
+
 }
