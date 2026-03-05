@@ -88,7 +88,7 @@ fun JournalListScreen(onAddEntry: () -> Unit, onEditEntry: (CycleData) -> Unit) 
             )
 
             Text(
-                text = "Your cycle entries.\n\n",
+                text = "Your cycle entries.\n",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary
             )
@@ -151,7 +151,7 @@ fun JournalListScreen(onAddEntry: () -> Unit, onEditEntry: (CycleData) -> Unit) 
                 }
             },
             modifier = Modifier
-                .align(Alignment.TopCenter)
+                .align(Alignment.BottomCenter)
                 .padding(all = 60.dp)
                 .fillMaxWidth(0.4f)
                 .height(52.dp),
