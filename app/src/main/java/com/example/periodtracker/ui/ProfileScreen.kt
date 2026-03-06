@@ -151,6 +151,7 @@ fun ProfileScreen() {
                     val displayDate = remember(lastPeriod) {
                         lastPeriod?.let {
                             val sdf = java.text.SimpleDateFormat("dd / MM / yyyy", java.util.Locale.getDefault())
+                            sdf.timeZone = java.util.TimeZone.getTimeZone("UTC")
                             sdf.format(java.util.Date(it))
                         } ?: ""
                     }
