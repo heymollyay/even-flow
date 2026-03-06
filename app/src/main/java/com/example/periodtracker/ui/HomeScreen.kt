@@ -131,11 +131,7 @@ fun HomeScreen() {
         CyclePhase(
             modifier = Modifier.padding(vertical = 12.dp),
             context = context)
-
-
     }
-
-
 }
 
 @Composable
@@ -383,7 +379,7 @@ fun CyclePhase(modifier: Modifier, context:Context) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer)
 
@@ -392,28 +388,21 @@ fun CyclePhase(modifier: Modifier, context:Context) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
-                .padding(vertical = 24.dp)
+                .padding(horizontal = 20.dp, vertical = 14.dp)
         ) {
             Text(
                 "You are in the $currentPhase phase.",
                 style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-
             Spacer(modifier = Modifier.width(8.dp))
 
-                Image(
-                    painter = painterResource(id = R.drawable.basiclogo),
-                    contentDescription = "Logo",
-                    modifier = Modifier
-                        .size(24.dp)
+            Image(painter = painterResource(id = R.drawable.basiclogo),
+                contentDescription = "Logo",
+                modifier = Modifier
+                    .size(24.dp)
 
-                )
-
-            }
-
+            )
         }
     }
-
-
-
+}
