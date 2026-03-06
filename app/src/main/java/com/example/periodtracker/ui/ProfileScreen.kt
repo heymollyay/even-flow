@@ -39,7 +39,7 @@ fun ProfileScreen() {
     var contraceptiveExpanded by remember { mutableStateOf(false) }
 
     val contraceptiveOptions = listOf(
-        "None"
+        "None",
         "Pill",
         "IUD",
         "Implant",
