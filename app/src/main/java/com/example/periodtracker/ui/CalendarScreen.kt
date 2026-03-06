@@ -49,7 +49,7 @@ fun getPhaseForDate(date: LocalDate, context: android.content.Context): CyclePha
     val cycleLength = UserData.getCycleLength(context)
     val menstrualLength = UserData.getMenstrualLength(context)
     val follicularLength = UserData.getFollicularLength(context)
-    val ovulationLength = UserData.getOvulationLength(context)
+    val ovulationLength = 2
 
     val daysSince = java.time.temporal.ChronoUnit.DAYS.between(lastPeriodDate, date).toInt()
     val positionInCycle = ((daysSince % cycleLength) + cycleLength) % cycleLength

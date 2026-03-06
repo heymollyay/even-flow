@@ -44,15 +44,6 @@ object UserData {
         return getPreferences(context).getString(KEY_USERNAME, "")?:""
     }
 
-    //tracks whether login screen can be skipped
-    fun setHasLoggedIn(context:Context) {
-        getPreferences(context).edit().putBoolean(KEY_HAS_LOGGED_IN, true).apply()
-    }
-
-    fun hasLoggedIn(context: Context): Boolean {
-        return getPreferences(context).getBoolean(KEY_HAS_LOGGED_IN, false)
-    }
-
     fun saveLastPeriodEnd(context: Context, epochMs: Long?) {
         if (epochMs != null) {
             getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs).apply() //convert date to ms
@@ -102,14 +93,6 @@ object UserData {
 
     fun getFollicularLength(context: Context): Int {
         return getPreferences(context).getInt(KEY_FOLLICULAR_LENGTH, 10)
-    }
-
-    fun saveOvulationLength(context: Context, days: Int) {
-        getPreferences(context).edit().putInt(KEY_OVULATION_LENGTH, days).apply()
-    }
-
-    fun getOvulationLength(context: Context): Int {
-        return getPreferences(context).getInt(KEY_OVULATION_LENGTH, 2)
     }
 
     fun saveDaysUntilMenstruation(context: Context, days: Int) {
