@@ -63,7 +63,8 @@ fun calculateDaysTillNextPeriod(context:Context) {
     //lastPeriod needs to be updated each time after a period happens so that days since stays updated.
     val lastPeriod = UserData.getLastPeriodEnd(context)?.let { epochMs ->
         Instant.ofEpochMilli(epochMs)
-            .atZone(ZoneId.systemDefault())
+            //UTC keeps it most accurate
+            .atZone(ZoneId.of("UTC"))
             .toLocalDate()
     }
 
@@ -112,7 +113,37 @@ fun calculateCurrentPhase(context:Context)
 
     UserData.saveCyclePhase(context, currentPhase)
 
-
-
 }
+
+fun calculateIfStartOfPhase(context:Context): Boolean {
+    val cycleLength = UserData.getCycleLength(context)
+    val menstrualLength = UserData.getMenstrualLength(context)
+    val ovulationLength = UserData.getOvulationLength(context)
+    val follicularLength = UserData.getFollicularLength(context)
+
+    val daysUntilPeriod = UserData.getDaysUntilMenstruation(context)
+    val currentDay = cycleLength - daysUntilPeriod
+
+    val startDayFollicular = menstrualLength + 1
+    val endDayFollicular   = menstrualLength + follicularLength
+
+    val startDayOvulation  = endDayFollicular + 1
+    val endDayOvulation    = endDayFollicular + ovulationLength
+
+    val startDayLuteal     = endDayOvulation + 1
+
+    if (currentDay == 1 || currentDay == startDayFollicular || currentDay == startDayLuteal || currentDay == startDayOvulation) {
+        return true
+    }
+    return false
+}
+
+// future logic implementations:
+// - birth control fixed cycles and phase lengths
+// - pregnancy phase adjustment
+// - abnormal period logging
+// - menstrual length adjustment
+// - menstrual length average length calculated from multiple periods
+// - fertility tracker
+
 

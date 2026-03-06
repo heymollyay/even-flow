@@ -29,6 +29,7 @@ import java.time.LocalDate
 import com.example.periodtracker.ui.theme.PeriodRed
 import com.example.periodtracker.data.DataExport
 import androidx.fragment.app.FragmentActivity //UPDATED TO USE THIS FOR BIOMETRICS CAPABILITY
+import com.example.periodtracker.data.UserData
 
 @Composable
 fun JournalScreen() {
@@ -439,6 +440,7 @@ fun JournalEntryForm(entryToEdit: CycleData? = null, onBack: () -> Unit) {
                         saved = true
                         selectedFlow = ""
                         notes = ""
+
                     }
                     onBack()
                 },
