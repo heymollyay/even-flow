@@ -83,7 +83,12 @@ fun HomeScreen() {
 
         WeeklyCalendarHeader()
 
+        //update logic every time
         calculateDaysTillNextPeriod(context)
+        calculateCurrentPhase(context)
+        calculateCurrentDay(context)
+
+
         val daysUntilNextPeriod = UserData.getDaysUntilMenstruation(context)
 
         Spacer(modifier = Modifier.height(24.dp))

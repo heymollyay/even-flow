@@ -55,6 +55,7 @@ class MainActivity : FragmentActivity() {
             }
         }
 
+
         CycleNotifications.createNotificationChannel(this)
 
         if (calculateIfStartOfPhase(this)) {
@@ -100,8 +101,11 @@ fun PeriodTrackerApp(
         shouldShowOnboarding -> {
             OnboardingQuiz(
                 onFinish = {
+                    //calculate logic moi important
                     calculatePhaseLengths(context)
                     calculateDaysTillNextPeriod(context)
+                    calculateCurrentPhase(context)
+                    calculateCurrentDay(context)
                     shouldShowOnboarding = false
 
                     //runtime notification permission request after onboarding is complete
