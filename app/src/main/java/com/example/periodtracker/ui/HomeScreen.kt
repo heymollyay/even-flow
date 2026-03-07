@@ -111,7 +111,7 @@ fun HomeScreen() {
                 ),
                 PhaseInput(
                     color = OvulationPurple,
-                    value = UserData.getOvulationLength(context),
+                    value = 2,
                 ),
                 PhaseInput(
                     color = LutealPink,

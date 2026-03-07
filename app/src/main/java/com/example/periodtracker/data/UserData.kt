@@ -21,8 +21,8 @@ object UserData {
     private const val KEY_OVULATION_LENGTH = "ovulation_length"
 
     private const val KEY_DAYS_UNTIL_MENSTRUATION = "days_until_menstruation"
-
     private const val KEY_CYCLE_PHASE = "cycle_phase"
+    private const val KEY_CURRENT_DAY = "current_day"
 
     private const val KEY_CURRENT_DAY = "current_day"
 
@@ -44,15 +44,6 @@ object UserData {
 
     fun getUsername(context: Context): String {
         return getPreferences(context).getString(KEY_USERNAME, "")?:""
-    }
-
-    //tracks whether login screen can be skipped
-    fun setHasLoggedIn(context:Context) {
-        getPreferences(context).edit().putBoolean(KEY_HAS_LOGGED_IN, true).apply()
-    }
-
-    fun hasLoggedIn(context: Context): Boolean {
-        return getPreferences(context).getBoolean(KEY_HAS_LOGGED_IN, false)
     }
 
     fun saveLastPeriodEnd(context: Context, epochMs: Long?) {
@@ -104,14 +95,6 @@ object UserData {
 
     fun getFollicularLength(context: Context): Int {
         return getPreferences(context).getInt(KEY_FOLLICULAR_LENGTH, 10)
-    }
-
-    fun saveOvulationLength(context: Context, days: Int) {
-        getPreferences(context).edit().putInt(KEY_OVULATION_LENGTH, days).apply()
-    }
-
-    fun getOvulationLength(context: Context): Int {
-        return getPreferences(context).getInt(KEY_OVULATION_LENGTH, 2)
     }
 
     fun saveDaysUntilMenstruation(context: Context, days: Int) {

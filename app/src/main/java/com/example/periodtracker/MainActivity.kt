@@ -1,8 +1,13 @@
 package com.example.periodtracker
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -20,7 +25,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import com.example.periodtracker.ui.theme.PeriodTrackerTheme
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -30,24 +34,43 @@ import com.example.periodtracker.ui.JournalScreen
 import com.example.periodtracker.ui.Login
 import com.example.periodtracker.ui.ProfileScreen
 import com.example.periodtracker.ui.CalendarScreen
-import com.example.periodtracker.ui.Welcome
 import com.example.periodtracker.onboarding.OnboardingQuiz
 import androidx.biometric.BiometricManager
 
+import androidx.core.content.ContextCompat
+import androidx.activity.result.ActivityResultLauncher
+
 class MainActivity : FragmentActivity() {
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted -> }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             PeriodTrackerTheme {
-                PeriodTrackerApp(modifier = Modifier.fillMaxSize())
+                PeriodTrackerApp(
+                    modifier = Modifier.fillMaxSize(),
+                    requestPermissionLauncher = requestPermissionLauncher
+                )
             }
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CycleNotifications.createNotificationChannel(this)
+        }
+
+        if (calculateIfStartOfPhase(this)) {
+            CycleNotifications.buildNotification(this)
         }
     }
 }
 
-@PreviewScreenSizes
 @Composable
-fun PeriodTrackerApp(modifier: Modifier = Modifier) {
+fun PeriodTrackerApp(
+    modifier: Modifier = Modifier,
+    requestPermissionLauncher: ActivityResultLauncher<String>
+) {
 
     val context = LocalContext.current
 
@@ -82,6 +105,17 @@ fun PeriodTrackerApp(modifier: Modifier = Modifier) {
                 onFinish = {
                     calculatePhaseLengths(context)
                     calculateDaysTillNextPeriod(context)
+                    shouldShowOnboarding = false
+
+                    when {
+                        ContextCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.POST_NOTIFICATIONS
+                        ) == PackageManager.PERMISSION_GRANTED -> { }
+                        else -> {
+                            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        }
+                    }
                     shouldShowOnboarding = false
                 }
             )
