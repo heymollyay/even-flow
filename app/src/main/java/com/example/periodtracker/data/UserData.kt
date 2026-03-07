@@ -3,7 +3,6 @@ package com.example.periodtracker.data
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
-import androidx.core.content.edit
 
 object UserData {
     private const val PREFS_FILE = "user_data"
@@ -18,6 +17,7 @@ object UserData {
     private const val KEY_FOLLICULAR_LENGTH = "follicular_length"
     private const val KEY_MENSTRUAL_LENGTH = "menstrual_length"
     private const val KEY_LUTEAL_LENGTH = "luteal_length"
+
     private const val KEY_DAYS_UNTIL_MENSTRUATION = "days_until_menstruation"
     private const val KEY_CYCLE_PHASE = "cycle_phase"
     private const val KEY_CURRENT_DAY = "current_day"
@@ -35,7 +35,7 @@ object UserData {
 
     // username encrypted on the device
     fun saveUsername(context: Context, username: String) {
-        getPreferences(context).edit { putString(KEY_USERNAME, username) }
+        getPreferences(context).edit().putString(KEY_USERNAME, username).apply()
     }
 
     fun getUsername(context: Context): String {
@@ -44,7 +44,7 @@ object UserData {
 
     fun saveLastPeriodStart(context: Context, epochMs: Long?) {
         if (epochMs != null) {
-            getPreferences(context).edit { putLong(KEY_LAST_PERIOD_START, epochMs) } //convert date to ms
+            getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs).apply() //convert date to ms
         }
 
     }
@@ -56,7 +56,7 @@ object UserData {
 
 
     fun saveCycleLength(context: Context, days: Int) {
-        getPreferences(context).edit { putInt(KEY_CYCLE_LENGTH, days) }
+        getPreferences(context).edit().putInt(KEY_CYCLE_LENGTH, days).apply()
     }
 
     fun getCycleLength(context:Context): Int {
@@ -64,21 +64,21 @@ object UserData {
     }
 
     fun saveLongTermContraceptives(context: Context, contraceptive: String) {
-        getPreferences(context).edit { putString(KEY_LONG_TERM_CONTRACEPTIVES, contraceptive) }
+        getPreferences(context).edit().putString(KEY_LONG_TERM_CONTRACEPTIVES, contraceptive).apply()
     }
 
     fun getLongTermContraceptives(context: Context): String {
         return getPreferences(context).getString(KEY_LONG_TERM_CONTRACEPTIVES, "")?:""
     }
     fun saveLutealLength(context: Context, days: Int) {
-        getPreferences(context).edit { putInt(KEY_LUTEAL_LENGTH, days) }
+        getPreferences(context).edit().putInt(KEY_LUTEAL_LENGTH, days).apply()
     }
     fun getLutealLength(context: Context): Int {
         return getPreferences(context).getInt(KEY_LUTEAL_LENGTH, 12)
     }
 
     fun saveMenstrualLength(context: Context, days: Int) {
-        getPreferences(context).edit { putInt(KEY_MENSTRUAL_LENGTH, days) }
+        getPreferences(context).edit().putInt(KEY_MENSTRUAL_LENGTH, days).apply()
     }
 
     fun getMenstrualLength(context: Context): Int {
@@ -86,7 +86,7 @@ object UserData {
     }
 
     fun saveFollicularLength(context: Context, days: Int) {
-        getPreferences(context).edit { putInt(KEY_FOLLICULAR_LENGTH, days) }
+        getPreferences(context).edit().putInt(KEY_FOLLICULAR_LENGTH, days).apply()
     }
 
     fun getFollicularLength(context: Context): Int {
@@ -94,7 +94,7 @@ object UserData {
     }
 
     fun saveDaysUntilMenstruation(context: Context, days: Int) {
-        getPreferences(context).edit { putInt(KEY_DAYS_UNTIL_MENSTRUATION, days) }
+        getPreferences(context).edit().putInt(KEY_DAYS_UNTIL_MENSTRUATION, days).apply()
     }
 
     fun getDaysUntilMenstruation(context: Context): Int {
@@ -102,7 +102,7 @@ object UserData {
     }
 
     fun saveCyclePhase(context: Context, phase: String) {
-        getPreferences(context).edit { putString(KEY_CYCLE_PHASE, phase) }
+        getPreferences(context).edit().putString(KEY_CYCLE_PHASE, phase).apply()
     }
 
     fun getCyclePhase(context: Context): String {
@@ -110,7 +110,7 @@ object UserData {
     }
 
     fun saveCurrentDay(context: Context, phase: Int) {
-        getPreferences(context).edit { putInt(KEY_CURRENT_DAY, phase) }
+        getPreferences(context).edit().putInt(KEY_CURRENT_DAY, phase).apply()
     }
 
     fun getCurrentDay(context: Context): Int {
