@@ -19,6 +19,7 @@ import com.example.periodtracker.Biometrics
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.filled.DateRange
+import com.example.periodtracker.calculateCurrentDay
 import com.example.periodtracker.calculateCurrentPhase
 import com.example.periodtracker.calculateDaysTillNextPeriod
 import com.example.periodtracker.calculatePhaseLengths
@@ -253,6 +254,7 @@ fun ProfileScreen() {
                             calculatePhaseLengths(context)
                             calculateDaysTillNextPeriod(context)
                             calculateCurrentPhase(context)
+                            calculateCurrentDay(context)
 
                             username = tempUsername
                             editMode = false
