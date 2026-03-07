@@ -72,11 +72,11 @@ fun phaseColor(phase: CyclePhase): Color = when (phase) {
 fun getCurrentPhaseName(context: android.content.Context): String {
     val phase = getPhaseForDate(LocalDate.now(), context)
     return when (phase) {
-        CyclePhase.MENSTRUATION -> "menstrual phase"
-        CyclePhase.FOLLICULAR -> "follicular phase"
-        CyclePhase.OVULATION -> "ovulation phase"
-        CyclePhase.LUTEAL -> "luteal phase"
-        CyclePhase.UNKNOWN -> "unknown phase"
+        CyclePhase.MENSTRUATION -> "menstrual"
+        CyclePhase.FOLLICULAR -> "follicular"
+        CyclePhase.OVULATION -> "ovulation"
+        CyclePhase.LUTEAL -> "luteal"
+        CyclePhase.UNKNOWN -> "unknown"
     }
 }
 
