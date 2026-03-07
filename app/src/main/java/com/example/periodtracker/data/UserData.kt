@@ -21,8 +21,8 @@ object UserData {
     private const val KEY_OVULATION_LENGTH = "ovulation_length"
 
     private const val KEY_DAYS_UNTIL_MENSTRUATION = "days_until_menstruation"
-
     private const val KEY_CYCLE_PHASE = "cycle_phase"
+    private const val KEY_CURRENT_DAY = "current_day"
 
 
     private fun getPreferences(context: Context) = EncryptedSharedPreferences.create(
@@ -112,11 +112,11 @@ object UserData {
     }
 
     fun saveCurrentDay(context: Context, phase: Int) {
-        getPreferences(context).edit().putInt(KEY_CYCLE_PHASE, phase).apply()
+        getPreferences(context).edit().putInt(KEY_CURRENT_DAY, phase).apply()
     }
 
     fun getCurrentDay(context: Context): Int {
-        return getPreferences(context).getInt(KEY_CYCLE_PHASE, 0)
+        return getPreferences(context).getInt(KEY_CURRENT_DAY, 0)
 
     }
 }
