@@ -35,11 +35,7 @@ import com.example.periodtracker.ui.theme.LutealPink
 import com.example.periodtracker.ui.theme.OvulationPurple
 import com.example.periodtracker.ui.theme.PeriodRed
 import com.example.periodtracker.ui.theme.White
-import java.time.Instant
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import androidx.compose.foundation.Image
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import com.example.periodtracker.R
 import com.example.periodtracker.calculateCurrentDay
