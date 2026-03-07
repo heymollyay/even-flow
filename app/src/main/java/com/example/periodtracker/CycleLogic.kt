@@ -14,8 +14,8 @@ fun calculatePhaseLengths(context: Context) {
     val cycleLength = UserData.getCycleLength(context)
     val menstrualLength = UserData.getMenstrualLength(context)
     val ovulationLength = 2
-    var follicularLength = UserData.getFollicularLength(context)
-    var lutealLength = UserData.getLutealLength(context)
+    var follicularLength: Int
+    var lutealLength: Int
 
     val baseFollicularLength = when (cycleLength) {
         in 15..20 -> 10
@@ -61,24 +61,24 @@ fun calculateDaysTillNextPeriod(context:Context) {
 
 
     //lastPeriod needs to be updated each time after a period happens so that days since stays updated.
-    val lastPeriod = UserData.getLastPeriodEnd(context)?.let { epochMs ->
+    val lastPeriod = UserData.getLastPeriodStart(context)?.let { epochMs ->
         Instant.ofEpochMilli(epochMs)
             //UTC keeps it most accurate
             .atZone(ZoneId.of("UTC"))
             .toLocalDate()
     }
 
-    val daysSincePeriod = ChronoUnit.DAYS.between(lastPeriod,today)
-
-    val daysUntilNextPeriod = cycleLength - daysSincePeriod
+    val daysSinceLastPeriodStart = ChronoUnit.DAYS.between(lastPeriod, today)
+    val daysUntilNextPeriod = cycleLength - daysSinceLastPeriodStart
 
     UserData.saveDaysUntilMenstruation(context,daysUntilNextPeriod.toInt())
+
 }
 
 fun calculateCurrentDay(context:Context) {
     val cycleLength = UserData.getCycleLength(context)
     val daysUntilPeriod = UserData.getDaysUntilMenstruation(context)
-    val currentDay = cycleLength - daysUntilPeriod
+    val currentDay = (cycleLength - daysUntilPeriod) + 1 //because we never on day 0
 
     UserData.saveCurrentDay(context, currentDay)
 }
@@ -86,15 +86,12 @@ fun calculateCurrentDay(context:Context) {
 fun calculateCurrentPhase(context:Context)
 {
     //need to call each time to keep up to date
-    val cycleLength = UserData.getCycleLength(context)
     val menstrualLength = UserData.getMenstrualLength(context)
     val ovulationLength = 2
     val follicularLength = UserData.getFollicularLength(context)
     val lutealLength = UserData.getLutealLength(context)
-
-    val daysUntilPeriod = UserData.getDaysUntilMenstruation(context)
-    val currentDay = cycleLength - daysUntilPeriod
-
+    val currentDay = UserData.getCurrentDay(context)
+    
     val startDayFollicular = menstrualLength + 1
     val endDayFollicular   = menstrualLength + follicularLength
 
@@ -133,10 +130,7 @@ fun calculateIfStartOfPhase(context:Context): Boolean {
 
     val startDayLuteal     = endDayOvulation + 1
 
-    if (currentDay == 1 || currentDay == startDayFollicular || currentDay == startDayLuteal || currentDay == startDayOvulation) {
-        return true
-    }
-    return false
+    return currentDay == 1 || currentDay == startDayFollicular || currentDay == startDayLuteal || currentDay == startDayOvulation
 }
 
 // future logic implementations:

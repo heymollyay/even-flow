@@ -7,7 +7,6 @@ import androidx.security.crypto.MasterKey
 object UserData {
     private const val PREFS_FILE = "user_data"
     private const val KEY_USERNAME = "username"
-    private const val KEY_HAS_LOGGED_IN = "has_logged_in"
 
     //cycle data collected in onboarding
     private const val KEY_LAST_PERIOD_START = "last_period_start"
@@ -18,7 +17,6 @@ object UserData {
     private const val KEY_FOLLICULAR_LENGTH = "follicular_length"
     private const val KEY_MENSTRUAL_LENGTH = "menstrual_length"
     private const val KEY_LUTEAL_LENGTH = "luteal_length"
-    private const val KEY_OVULATION_LENGTH = "ovulation_length"
 
     private const val KEY_DAYS_UNTIL_MENSTRUATION = "days_until_menstruation"
     private const val KEY_CYCLE_PHASE = "cycle_phase"
@@ -46,14 +44,14 @@ object UserData {
         return getPreferences(context).getString(KEY_USERNAME, "")?:""
     }
 
-    fun saveLastPeriodEnd(context: Context, epochMs: Long?) {
+    fun saveLastPeriodStart(context: Context, epochMs: Long?) {
         if (epochMs != null) {
             getPreferences(context).edit().putLong(KEY_LAST_PERIOD_START, epochMs).apply() //convert date to ms
         }
 
     }
 
-    fun getLastPeriodEnd(context: Context): Long? {
+    fun getLastPeriodStart(context: Context): Long? {
         val value = getPreferences(context).getLong(KEY_LAST_PERIOD_START, -1L)
         return if (value == -1L) null else value
     }
