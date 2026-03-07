@@ -22,8 +22,6 @@ object UserData {
     private const val KEY_CYCLE_PHASE = "cycle_phase"
     private const val KEY_CURRENT_DAY = "current_day"
 
-    private const val KEY_CURRENT_DAY = "current_day"
-
 
     private fun getPreferences(context: Context) = EncryptedSharedPreferences.create(
         context,
