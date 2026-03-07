@@ -33,7 +33,7 @@ fun ProfileScreen() {
     var tempUsername by remember { mutableStateOf("") }
     var cycleLength by remember { mutableStateOf(UserData.getCycleLength(context).toString()) }
     var periodLength by remember { mutableStateOf(UserData.getMenstrualLength(context).toString()) }
-    var lastPeriod by remember { mutableStateOf<Long?>(UserData.getLastPeriodEnd(context)) }
+    var lastPeriod by remember { mutableStateOf<Long?>(UserData.getLastPeriodStart(context)) }
     var contraceptive by remember { mutableStateOf(UserData.getLongTermContraceptives(context)) }
 
     var contraceptiveExpanded by remember { mutableStateOf(false) }
@@ -172,7 +172,7 @@ fun ProfileScreen() {
                         verticalArrangement = Arrangement.spacedBy(4.dp)
                     ) {
                         Text(
-                            text = "End of last period (date)",
+                            text = "Start of last period (date)",
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -246,7 +246,7 @@ fun ProfileScreen() {
                             UserData.saveUsername(context, tempUsername)
                             UserData.saveCycleLength(context, cycleLength.toInt())
                             UserData.saveMenstrualLength(context, periodLength.toInt())
-                            UserData.saveLastPeriodEnd(context, lastPeriod)
+                            UserData.saveLastPeriodStart(context, lastPeriod)
                             UserData.saveLongTermContraceptives(context, contraceptive)
 
                             //Update logic very important

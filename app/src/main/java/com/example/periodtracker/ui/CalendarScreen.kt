@@ -8,7 +8,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -39,7 +38,7 @@ val CurrentWeekColor = Color(0xFFD3EDD0).copy(alpha = 0.3f)
 enum class CyclePhase { MENSTRUATION, FOLLICULAR, OVULATION, LUTEAL, UNKNOWN }
 
 fun getPhaseForDate(date: LocalDate, context: android.content.Context): CyclePhase {
-    val lastPeriodMs = UserData.getLastPeriodEnd(context) ?: return CyclePhase.UNKNOWN
+    val lastPeriodMs = UserData.getLastPeriodStart(context) ?: return CyclePhase.UNKNOWN
     if (lastPeriodMs == -1L) return CyclePhase.UNKNOWN
 
     val lastPeriodDate = java.time.Instant.ofEpochMilli(lastPeriodMs)

@@ -56,7 +56,7 @@ fun OnboardingQuiz(onFinish: () -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
 
     var username     by remember { mutableStateOf(UserData.getUsername(context)) }
-    var lastPeriod   by remember { mutableStateOf<Long?>(UserData.getLastPeriodEnd(context)) }
+    var lastPeriod   by remember { mutableStateOf<Long?>(UserData.getLastPeriodStart(context)) }
     var periodLength by remember { mutableIntStateOf(UserData.getMenstrualLength(context)) }
     var cycleLength  by remember { mutableIntStateOf(UserData.getCycleLength(context)) }
 
@@ -78,7 +78,7 @@ fun OnboardingQuiz(onFinish: () -> Unit, modifier: Modifier = Modifier) {
             onAnswerChange = { lastPeriod = it },
             onBack = { currentQuestion-- },
             onNext = {
-                UserData.saveLastPeriodEnd(context, lastPeriod)
+                UserData.saveLastPeriodStart(context, lastPeriod)
                 currentQuestion++
             }
         )
@@ -305,7 +305,7 @@ fun OnboardingLastPeriodQuestion(
 
     QuestionScaffold(onBack = onBack, onNext = onNext) {
         Text(
-            text = "When did your last period end?",
+            text = "What day did your last period start?",
             fontSize = 20.sp,
             color = TextDark,
             fontWeight = FontWeight.Medium,
