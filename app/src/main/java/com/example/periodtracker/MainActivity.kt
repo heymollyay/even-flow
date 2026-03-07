@@ -39,6 +39,7 @@ import androidx.core.content.ContextCompat
 import androidx.activity.result.ActivityResultLauncher
 
 class MainActivity : FragmentActivity() {
+    //Permissions
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) {}
@@ -95,7 +96,7 @@ fun PeriodTrackerApp(
     var isAuthenticated by rememberSaveable { mutableStateOf(false) }
 
     when {
-        // First ever launch → onboarding
+        // first ever launch
         shouldShowOnboarding -> {
             OnboardingQuiz(
                 onFinish = {
@@ -103,6 +104,7 @@ fun PeriodTrackerApp(
                     calculateDaysTillNextPeriod(context)
                     shouldShowOnboarding = false
 
+                    //runtime notification permission request after onboarding is complete
                     when {
                         ContextCompat.checkSelfPermission(
                             context,
