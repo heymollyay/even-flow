@@ -85,6 +85,7 @@ fun calculateCurrentDay(context:Context) {
 
 fun calculateCurrentPhase(context:Context)
 {
+    //need to call each time to keep up to date
     val cycleLength = UserData.getCycleLength(context)
     val menstrualLength = UserData.getMenstrualLength(context)
     val ovulationLength = 2

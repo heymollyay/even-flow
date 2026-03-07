@@ -1,8 +1,10 @@
 package com.example.periodtracker
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
@@ -34,7 +36,7 @@ import com.example.periodtracker.ui.Welcome
 import com.example.periodtracker.onboarding.OnboardingQuiz
 import androidx.biometric.BiometricManager
 
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() { //expands FragmentActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -42,8 +44,19 @@ class MainActivity : FragmentActivity() {
                 PeriodTrackerApp(modifier = Modifier.fillMaxSize())
             }
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CycleNotifications.createNotificationChannel(this)
+        }
+
+        if (calculateIfStartOfPhase(this)) {
+            CycleNotifications.buildNotification(this)
+        }
+
     }
 }
+
+
 
 @PreviewScreenSizes
 @Composable
